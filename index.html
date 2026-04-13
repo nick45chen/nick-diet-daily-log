@@ -709,6 +709,8 @@
 
     const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
     const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
+    const REQUEST_VERSION = Date.now().toString();
+    const MANIFEST_POLL_MS = 60000;
 
     // ===== Utilities =====
     function formatDate(dateStr) {
@@ -738,12 +740,46 @@
       return Math.min(Math.round((value / goal) * 100), 100);
     }
 
+    function withCacheBust(url, version = REQUEST_VERSION) {
+      const target = new URL(url, window.location.href);
+      target.searchParams.set('v', version);
+      return target.toString();
+    }
+
+    function getGitHubRawURL(path) {
+      if (!window.location.hostname.endsWith('.github.io') || !path.startsWith('data/')) return null;
+      const owner = window.location.hostname.replace(/\.github\.io$/, '');
+      const repo = window.location.pathname.split('/').filter(Boolean)[0];
+      if (!owner || !repo) return null;
+      return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${path}`;
+    }
+
+    function getAssetURL(path) {
+      if (!path) return path;
+      const version = state.manifest?.lastUpdated || REQUEST_VERSION;
+      return withCacheBust(path, version);
+    }
+
+    function updateLastUpdatedLabel(lastUpdated) {
+      if (!lastUpdated) return;
+      const dt = new Date(lastUpdated);
+      document.getElementById('lastUpdated').textContent =
+        `最後更新：${dt.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`;
+    }
+
     async function fetchJSON(url) {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) return null;
-        return await res.json();
-      } catch { return null; }
+      const candidates = [withCacheBust(url)];
+      const rawURL = getGitHubRawURL(url);
+      if (rawURL) candidates.push(withCacheBust(rawURL));
+
+      for (const candidate of candidates) {
+        try {
+          const res = await fetch(candidate, { cache: 'no-store' });
+          if (!res.ok) continue;
+          return await res.json();
+        } catch {}
+      }
+      return null;
     }
 
     // ===== Tab Switching =====
@@ -773,7 +809,7 @@
     });
 
     // ===== Load & Render Day =====
-    async function loadDay(dateStr) {
+    async function loadDay(dateStr, { forceRefresh = false } = {}) {
       state.currentDate = dateStr;
       document.getElementById('currentDate').textContent = dateStr;
       document.getElementById('currentWeekday').textContent = getWeekday(dateStr);
@@ -781,7 +817,7 @@
       const today = getTodayTaipei();
       document.getElementById('nextDay').disabled = (dateStr >= today);
 
-      if (!state.dayCache[dateStr]) {
+      if (forceRefresh || !state.dayCache[dateStr]) {
         state.dayCache[dateStr] = await fetchJSON(`data/${dateStr}.json`);
       }
       renderDay(state.dayCache[dateStr]);
@@ -807,13 +843,14 @@
       // Render meals
       mealsContainer.innerHTML = data.meals.map(meal => {
         const icon = MEAL_ICONS[meal.type] || '🍽️';
-        const photos = meal.items.filter(i => i.image).map(i =>
-          `<img src="${i.image}" alt="${i.name}" loading="lazy" onclick="openLightbox('${i.image}')">`
-        ).join('');
+        const photos = meal.items.filter(i => i.image).map(i => {
+          const imageUrl = getAssetURL(i.image);
+          return `<img src="${imageUrl}" alt="${i.name}" loading="lazy" onclick="openLightbox('${imageUrl}')">`;
+        }).join('');
 
         const items = meal.items.map(item => `
           <div class="meal-item">
-            ${item.image ? `<img class="meal-item-photo" src="${item.image}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${item.image}')">` : ''}
+            ${item.image ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
             <div class="meal-item-info">
               <div class="meal-item-name">${item.name}</div>
               <div class="meal-item-macros">
@@ -997,7 +1034,7 @@
           </div>
           ${latest.image ? `
             <div class="inbody-photo-container">
-              <img src="${latest.image}" alt="InBody 報告" loading="lazy" onclick="openLightbox('${latest.image}')" style="margin-top:16px; max-height:400px;">
+              <img src="${getAssetURL(latest.image)}" alt="InBody 報告" loading="lazy" onclick="openLightbox('${getAssetURL(latest.image)}')" style="margin-top:16px; max-height:400px;">
             </div>
           ` : ''}
         </div>
@@ -1014,7 +1051,7 @@
         for (const item of [...allData].reverse()) {
           if (item.date === latest.date) continue;
           html += `
-            <div class="inbody-history-item" onclick="${item.image ? `openLightbox('${item.image}')` : ''}">
+            <div class="inbody-history-item" onclick="${item.image ? `openLightbox('${getAssetURL(item.image)}')` : ''}">
               <div class="history-date-badge">
                 <span class="h-day">${new Date(item.date+'T00:00:00+08:00').getDate()}</span>
                 <span class="h-month">${new Date(item.date+'T00:00:00+08:00').getMonth()+1}月</span>
@@ -1122,6 +1159,24 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
+    async function refreshManifest() {
+      const latestManifest = await fetchJSON('data/manifest.json');
+      if (!latestManifest) return;
+
+      const previousLastUpdated = state.manifest?.lastUpdated;
+      state.manifest = latestManifest;
+      updateLastUpdatedLabel(latestManifest.lastUpdated);
+
+      if (!previousLastUpdated || previousLastUpdated === latestManifest.lastUpdated) return;
+
+      state.dayCache = {};
+      state.inbodyCache = {};
+
+      await loadDay(state.currentDate, { forceRefresh: true });
+      if (document.getElementById('history').classList.contains('active')) await renderHistory();
+      if (document.getElementById('inbody').classList.contains('active')) await renderInBody();
+    }
+
     // ===== Init =====
     async function init() {
       const [goals, manifest] = await Promise.all([
@@ -1136,11 +1191,8 @@
       state.currentDate = today;
       await loadDay(today);
 
-      if (manifest?.lastUpdated) {
-        const dt = new Date(manifest.lastUpdated);
-        document.getElementById('lastUpdated').textContent =
-          `最後更新：${dt.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`;
-      }
+      updateLastUpdatedLabel(manifest?.lastUpdated);
+      window.setInterval(refreshManifest, MANIFEST_POLL_MS);
     }
 
     init();
