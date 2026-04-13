@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nick 飲食日誌</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Material 3 Design Tokens ===== */
+    :root {
+      --md-primary: #00BFA5;
+      --md-on-primary: #003731;
+      --md-primary-container: #A7F3EC;
+      --md-on-primary-container: #00201C;
+      --md-secondary: #FF6D00;
+      --md-on-secondary: #FFFFFF;
+      --md-secondary-container: #FFE0B2;
+      --md-tertiary: #7C4DFF;
+      --md-tertiary-container: #EDE7F6;
+      --md-error: #FF5252;
+      --md-error-container: #FFCDD2;
+      --md-surface: #FAFDFB;
+      --md-surface-dim: #D9DCD9;
+      --md-surface-container: #EDEEED;
+      --md-surface-container-low: #F3F5F3;
+      --md-surface-container-high: #E7E9E7;
+      --md-on-surface: #191C1B;
+      --md-on-surface-variant: #3F4946;
+      --md-outline: #6F7975;
+      --md-outline-variant: #BFC9C5;
+      --md-shadow: rgba(0,0,0,0.15);
+
+      --md-shape-sm: 8px;
+      --md-shape-md: 12px;
+      --md-shape-lg: 16px;
+      --md-shape-xl: 28px;
+
+      /* Macro colors */
+      --color-calories: #FF6D00;
+      --color-protein: #00BFA5;
+      --color-fat: #FF5252;
+      --color-carbs: #7C4DFF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+      background: var(--md-surface);
+      color: var(--md-on-surface);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== Header ===== */
+    .app-header {
+      background: linear-gradient(135deg, var(--md-primary), #00897B);
+      color: white;
+      padding: 24px 20px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .app-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .app-header p {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    /* ===== Tab Navigation ===== */
+    .tab-nav {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid var(--md-outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px var(--md-shadow);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 14px 8px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--md-on-surface-variant);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .tab-btn.active {
+      color: var(--md-primary);
+      font-weight: 700;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: var(--md-primary);
+      border-radius: 3px 3px 0 0;
+    }
+    .tab-btn .tab-icon {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    /* ===== Main Content ===== */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ===== Cards ===== */
+    .card {
+      background: white;
+      border-radius: var(--md-shape-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px var(--md-shadow);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== Date Navigation ===== */
+    .date-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .date-nav button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--md-outline-variant);
+      background: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-on-surface);
+      transition: background 0.2s;
+    }
+    .date-nav button:hover { background: var(--md-surface-container); }
+    .date-nav button:disabled { opacity: 0.3; cursor: default; }
+    .date-nav .date-display {
+      font-size: 18px;
+      font-weight: 600;
+      min-width: 180px;
+      text-align: center;
+    }
+    .date-nav .date-weekday {
+      font-size: 13px;
+      color: var(--md-on-surface-variant);
+      font-weight: 400;
+    }
+
+    /* ===== Macro Summary ===== */
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .macro-card {
+      text-align: center;
+      padding: 14px 8px;
+      border-radius: var(--md-shape-md);
+      background: var(--md-surface-container-low);
+      position: relative;
+      overflow: hidden;
+    }
+    .macro-card .macro-icon { font-size: 20px; margin-bottom: 4px; }
+    .macro-card .macro-label {
+      font-size: 11px;
+      color: var(--md-on-surface-variant);
+      margin-bottom: 4px;
+    }
+    .macro-card .macro-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .macro-card .macro-goal {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--md-on-surface-variant);
+      margin-top: 2px;
+    }
+    .macro-card .macro-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--md-outline-variant);
+    }
+    .macro-card .macro-bar-fill {
+      height: 100%;
+      border-radius: 0 2px 2px 0;
+      transition: width 0.5s ease;
+    }
+    .macro-card.calories .macro-value { color: var(--color-calories); }
+    .macro-card.calories .macro-bar-fill { background: var(--color-calories); }
+    .macro-card.protein .macro-value { color: var(--color-protein); }
+    .macro-card.protein .macro-bar-fill { background: var(--color-protein); }
+    .macro-card.fat .macro-value { color: var(--color-fat); }
+    .macro-card.fat .macro-bar-fill { background: var(--color-fat); }
+    .macro-card.carbs .macro-value { color: var(--color-carbs); }
+    .macro-card.carbs .macro-bar-fill { background: var(--color-carbs); }
+
+    /* ===== Meal Card ===== */
+    .meal-card {
+      background: white;
+      border-radius: var(--md-shape-md);
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px var(--md-shadow);
+      overflow: hidden;
+    }
+    .meal-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .meal-header .meal-type {
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meal-header .meal-kcal {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-calories);
+    }
+    .meal-body { padding: 0 16px 14px; }
+    .meal-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--md-surface-container);
+      gap: 12px;
+    }
+    .meal-item:last-child { border-bottom: none; }
+    .meal-item-photo {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--md-shape-sm);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--md-surface-container);
+    }
+    .meal-item-info { flex: 1; min-width: 0; }
+    .meal-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .meal-item-macros {
+      display: flex;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+      font-family: 'Inter', sans-serif;
+    }
+    .meal-item-macros span { white-space: nowrap; }
+
+    /* ===== Meal Photos Gallery ===== */
+    .meal-photos {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .meal-photos img {
+      width: 120px;
+      height: 90px;
+      border-radius: var(--md-shape-sm);
+      object-fit: cover;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .meal-photos img:hover { transform: scale(1.05); }
+
+    /* ===== Advice Box ===== */
+    .advice-box {
+      background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+      border-radius: var(--md-shape-md);
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--md-primary);
+    }
+    .advice-box .advice-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--md-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .advice-box .advice-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--md-on-surface);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--md-on-surface-variant);
+    }
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--md-on-surface); }
+    .empty-state p { font-size: 14px; }
+
+    /* ===== History Tab ===== */
+    .history-list { list-style: none; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: white;
+      border-radius: var(--md-shape-md);
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px var(--md-shadow);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      gap: 14px;
+    }
+    .history-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px var(--md-shadow);
+    }
+    .history-date-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--md-shape-md);
+      background: var(--md-primary-container);
+      color: var(--md-on-primary-container);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .history-date-badge .h-day {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .history-date-badge .h-month {
+      font-size: 10px;
+      font-weight: 500;
+    }
+    .history-info { flex: 1; }
+    .history-info .h-date { font-size: 14px; font-weight: 500; }
+    .history-info .h-summary {
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+      margin-top: 2px;
+      font-family: 'Inter', sans-serif;
+    }
+    .history-arrow {
+      color: var(--md-outline);
+      font-size: 18px;
+    }
+
+    /* ===== InBody Tab ===== */
+    .inbody-latest {
+      background: linear-gradient(135deg, #E3F2FD, #E8EAF6);
+      border-radius: var(--md-shape-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .inbody-latest .inbody-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #1565C0;
+    }
+    .inbody-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .inbody-metric {
+      text-align: center;
+      padding: 12px 8px;
+      background: rgba(255,255,255,0.7);
+      border-radius: var(--md-shape-md);
+    }
+    .inbody-metric .metric-label {
+      font-size: 11px;
+      color: var(--md-on-surface-variant);
+      margin-bottom: 4px;
+    }
+    .inbody-metric .metric-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1565C0;
+    }
+    .inbody-metric .metric-unit {
+      font-size: 11px;
+      color: var(--md-on-surface-variant);
+    }
+    .inbody-photo-container {
+      margin-top: 16px;
+      text-align: center;
+    }
+    .inbody-photo-container img {
+      max-width: 100%;
+      border-radius: var(--md-shape-md);
+      cursor: pointer;
+    }
+    .inbody-chart-container {
+      background: white;
+      border-radius: var(--md-shape-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px var(--md-shadow);
+    }
+    .inbody-history-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: white;
+      border-radius: var(--md-shape-md);
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px var(--md-shadow);
+      cursor: pointer;
+      gap: 12px;
+    }
+
+    /* ===== Goals Tab ===== */
+    .goal-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--md-surface-container);
+    }
+    .goal-item:last-child { border-bottom: none; }
+    .goal-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+    }
+    .goal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .goal-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .goal-unit {
+      font-size: 13px;
+      color: var(--md-on-surface-variant);
+      font-weight: 400;
+    }
+
+    /* ===== Image Lightbox ===== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 95%;
+      max-height: 95%;
+      border-radius: var(--md-shape-md);
+      object-fit: contain;
+    }
+
+    /* ===== Footer ===== */
+    .app-footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .macro-grid { grid-template-columns: repeat(2, 1fr); }
+      .inbody-metrics { grid-template-columns: repeat(2, 1fr); }
+      .macro-card .macro-value { font-size: 18px; }
+      main { padding: 12px; }
+    }
+
+    /* ===== Loading Skeleton ===== */
+    .skeleton {
+      background: linear-gradient(90deg, var(--md-surface-container) 25%, var(--md-surface-container-high) 50%, var(--md-surface-container) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--md-shape-sm);
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ===== SVG Chart ===== */
+    .trend-chart { width: 100%; overflow: visible; }
+    .trend-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .trend-dot { cursor: pointer; }
+    .trend-label { font-family: 'Inter', sans-serif; font-size: 10px; fill: var(--md-on-surface-variant); }
+    .trend-value-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <h1>🥗 Nick 飲食日誌</h1>
+    <p>與教練同步 · 達成體態目標</p>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="today">
+      <span class="tab-icon">📋</span>今日
+    </button>
+    <button class="tab-btn" data-tab="history">
+      <span class="tab-icon">📅</span>歷史
+    </button>
+    <button class="tab-btn" data-tab="inbody">
+      <span class="tab-icon">💪</span>InBody
+    </button>
+    <button class="tab-btn" data-tab="goals">
+      <span class="tab-icon">🎯</span>目標
+    </button>
+  </nav>
+
+  <main>
+    <!-- ===== TODAY TAB ===== -->
+    <div id="today" class="tab-content active">
+      <!-- Date Nav -->
+      <div class="date-nav">
+        <button id="prevDay" aria-label="前一天">‹</button>
+        <div>
+          <div class="date-display" id="currentDate"></div>
+          <div class="date-weekday" id="currentWeekday"></div>
+        </div>
+        <button id="nextDay" aria-label="後一天">›</button>
+      </div>
+
+      <!-- Macro Summary -->
+      <div class="macro-grid" id="macroGrid">
+        <div class="macro-card calories">
+          <div class="macro-icon">🔥</div>
+          <div class="macro-label">熱量</div>
+          <div class="macro-value" id="totalCal">0</div>
+          <div class="macro-goal" id="goalCal"></div>
+          <div class="macro-bar"><div class="macro-bar-fill" id="barCal"></div></div>
+        </div>
+        <div class="macro-card protein">
+          <div class="macro-icon">🥩</div>
+          <div class="macro-label">蛋白質</div>
+          <div class="macro-value" id="totalProtein">0</div>
+          <div class="macro-goal" id="goalProtein"></div>
+          <div class="macro-bar"><div class="macro-bar-fill" id="barProtein"></div></div>
+        </div>
+        <div class="macro-card fat">
+          <div class="macro-icon">🧈</div>
+          <div class="macro-label">脂肪</div>
+          <div class="macro-value" id="totalFat">0</div>
+          <div class="macro-goal" id="goalFat"></div>
+          <div class="macro-bar"><div class="macro-bar-fill" id="barFat"></div></div>
+        </div>
+        <div class="macro-card carbs">
+          <div class="macro-icon">🍚</div>
+          <div class="macro-label">碳水</div>
+          <div class="macro-value" id="totalCarbs">0</div>
+          <div class="macro-goal" id="goalCarbs"></div>
+          <div class="macro-bar"><div class="macro-bar-fill" id="barCarbs"></div></div>
+        </div>
+      </div>
+
+      <!-- Meals Container -->
+      <div id="mealsContainer"></div>
+
+      <!-- Advice -->
+      <div id="adviceContainer"></div>
+
+      <!-- Empty State -->
+      <div id="emptyToday" class="empty-state" style="display:none;">
+        <div class="empty-icon">🍽️</div>
+        <h3>尚無今日記錄</h3>
+        <p>使用 Claude Code 上傳食物照片開始記錄吧！</p>
+      </div>
+    </div>
+
+    <!-- ===== HISTORY TAB ===== -->
+    <div id="history" class="tab-content">
+      <div class="card">
+        <div class="card-title">📅 歷史紀錄</div>
+        <ul class="history-list" id="historyList"></ul>
+        <div id="emptyHistory" class="empty-state" style="display:none;">
+          <div class="empty-icon">📝</div>
+          <h3>尚無歷史紀錄</h3>
+          <p>開始記錄你的每日飲食吧</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INBODY TAB ===== -->
+    <div id="inbody" class="tab-content">
+      <div id="inbodyContent"></div>
+      <div id="emptyInbody" class="empty-state" style="display:none;">
+        <div class="empty-icon">📊</div>
+        <h3>尚無 InBody 資料</h3>
+        <p>上傳 InBody 報告照片來追蹤身體數據</p>
+      </div>
+    </div>
+
+    <!-- ===== GOALS TAB ===== -->
+    <div id="goals" class="tab-content">
+      <div class="card">
+        <div class="card-title">🎯 每日營養目標</div>
+        <div id="goalsContent"></div>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <div class="card-title">📖 使用說明</div>
+        <div style="font-size: 14px; line-height: 1.8; color: var(--md-on-surface-variant);">
+          <p><strong>記錄飲食：</strong>在 Claude Code 中輸入食物照片路徑，AI 會自動辨識並記錄營養素。</p>
+          <p style="margin-top:8px;"><strong>記錄 InBody：</strong>上傳 InBody 報告照片，AI 會擷取身體數據。</p>
+          <p style="margin-top:8px;"><strong>部署更新：</strong>記錄完成後 git push 即可更新網頁。</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <span id="lastUpdated"></span>
+  </footer>
+
+  <script>
+    // ===== App State =====
+    const state = {
+      goals: null,
+      manifest: null,
+      currentDate: null,
+      dayCache: {},
+      inbodyCache: {}
+    };
+
+    const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
+    const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
+
+    // ===== Utilities =====
+    function formatDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00+08:00');
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function getWeekday(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00+08:00');
+      return `星期${WEEKDAYS[d.getDay()]}`;
+    }
+
+    function getTodayTaipei() {
+      const now = new Date();
+      const taipei = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
+      return `${taipei.getFullYear()}-${String(taipei.getMonth()+1).padStart(2,'0')}-${String(taipei.getDate()).padStart(2,'0')}`;
+    }
+
+    function addDays(dateStr, n) {
+      const d = new Date(dateStr + 'T00:00:00+08:00');
+      d.setDate(d.getDate() + n);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function pct(value, goal) {
+      if (!goal) return 0;
+      return Math.min(Math.round((value / goal) * 100), 100);
+    }
+
+    async function fetchJSON(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        return await res.json();
+      } catch { return null; }
+    }
+
+    // ===== Tab Switching =====
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'history') renderHistory();
+        if (btn.dataset.tab === 'inbody') renderInBody();
+        if (btn.dataset.tab === 'goals') renderGoals();
+      });
+    });
+
+    // ===== Date Navigation =====
+    document.getElementById('prevDay').addEventListener('click', () => {
+      state.currentDate = addDays(state.currentDate, -1);
+      loadDay(state.currentDate);
+    });
+    document.getElementById('nextDay').addEventListener('click', () => {
+      const today = getTodayTaipei();
+      if (state.currentDate < today) {
+        state.currentDate = addDays(state.currentDate, 1);
+        loadDay(state.currentDate);
+      }
+    });
+
+    // ===== Load & Render Day =====
+    async function loadDay(dateStr) {
+      state.currentDate = dateStr;
+      document.getElementById('currentDate').textContent = dateStr;
+      document.getElementById('currentWeekday').textContent = getWeekday(dateStr);
+
+      const today = getTodayTaipei();
+      document.getElementById('nextDay').disabled = (dateStr >= today);
+
+      if (!state.dayCache[dateStr]) {
+        state.dayCache[dateStr] = await fetchJSON(`data/${dateStr}.json`);
+      }
+      renderDay(state.dayCache[dateStr]);
+    }
+
+    function renderDay(data) {
+      const mealsContainer = document.getElementById('mealsContainer');
+      const adviceContainer = document.getElementById('adviceContainer');
+      const emptyState = document.getElementById('emptyToday');
+
+      if (!data) {
+        // No data
+        mealsContainer.innerHTML = '';
+        adviceContainer.innerHTML = '';
+        emptyState.style.display = 'block';
+        updateMacros(null);
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      updateMacros(data.dailyTotal);
+
+      // Render meals
+      mealsContainer.innerHTML = data.meals.map(meal => {
+        const icon = MEAL_ICONS[meal.type] || '🍽️';
+        const photos = meal.items.filter(i => i.image).map(i =>
+          `<img src="${i.image}" alt="${i.name}" loading="lazy" onclick="openLightbox('${i.image}')">`
+        ).join('');
+
+        const items = meal.items.map(item => `
+          <div class="meal-item">
+            ${item.image ? `<img class="meal-item-photo" src="${item.image}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${item.image}')">` : ''}
+            <div class="meal-item-info">
+              <div class="meal-item-name">${item.name}</div>
+              <div class="meal-item-macros">
+                <span>🔥 ${item.calories}</span>
+                <span>P ${item.protein}g</span>
+                <span>F ${item.fat}g</span>
+                <span>C ${item.carbs}g</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        return `
+          <div class="meal-card">
+            <div class="meal-header">
+              <span class="meal-type">${icon} ${meal.type}${meal.time ? ' · ' + meal.time : ''}</span>
+              <span class="meal-kcal">${meal.subtotal?.calories || 0} kcal</span>
+            </div>
+            ${photos ? `<div class="meal-photos">${photos}</div>` : ''}
+            <div class="meal-body">${items}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Render advice
+      if (data.advice) {
+        adviceContainer.innerHTML = `
+          <div class="advice-box">
+            <div class="advice-title">💡 AI 營養師建議</div>
+            <div class="advice-text">${data.advice.replace(/\n/g, '<br>')}</div>
+          </div>
+        `;
+      } else {
+        adviceContainer.innerHTML = '';
+      }
+    }
+
+    function updateMacros(totals) {
+      const g = state.goals || {};
+      const cal = totals?.calories || 0;
+      const protein = totals?.protein || 0;
+      const fat = totals?.fat || 0;
+      const carbs = totals?.carbs || 0;
+
+      document.getElementById('totalCal').textContent = cal;
+      document.getElementById('totalProtein').textContent = protein + 'g';
+      document.getElementById('totalFat').textContent = fat + 'g';
+      document.getElementById('totalCarbs').textContent = carbs + 'g';
+
+      document.getElementById('goalCal').textContent = `/ ${g.dailyCalories || '-'}`;
+      document.getElementById('goalProtein').textContent = `/ ${g.protein || '-'}g`;
+      document.getElementById('goalFat').textContent = `≤ ${g.fat || '-'}g`;
+      document.getElementById('goalCarbs').textContent = `/ ${g.carbs || '-'}g`;
+
+      document.getElementById('barCal').style.width = pct(cal, g.dailyCalories) + '%';
+      document.getElementById('barProtein').style.width = pct(protein, g.protein) + '%';
+      document.getElementById('barFat').style.width = pct(fat, g.fat) + '%';
+      document.getElementById('barCarbs').style.width = pct(carbs, g.carbs) + '%';
+    }
+
+    // ===== History Tab =====
+    async function renderHistory() {
+      const list = document.getElementById('historyList');
+      const empty = document.getElementById('emptyHistory');
+
+      if (!state.manifest || state.manifest.days.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      const days = [...state.manifest.days].sort().reverse();
+      let html = '';
+      for (const day of days) {
+        if (!state.dayCache[day]) {
+          state.dayCache[day] = await fetchJSON(`data/${day}.json`);
+        }
+        const d = state.dayCache[day];
+        const date = new Date(day + 'T00:00:00+08:00');
+        const dayNum = date.getDate();
+        const month = date.getMonth() + 1;
+        const total = d?.dailyTotal;
+        const summary = total
+          ? `${total.calories} kcal · P ${total.protein}g · F ${total.fat}g · C ${total.carbs}g`
+          : '無資料';
+
+        html += `
+          <li class="history-item" onclick="goToDay('${day}')">
+            <div class="history-date-badge">
+              <span class="h-day">${dayNum}</span>
+              <span class="h-month">${month}月</span>
+            </div>
+            <div class="history-info">
+              <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
+              <div class="h-summary">${summary}</div>
+            </div>
+            <span class="history-arrow">›</span>
+          </li>
+        `;
+      }
+      list.innerHTML = html;
+    }
+
+    function goToDay(dateStr) {
+      state.currentDate = dateStr;
+      loadDay(dateStr);
+      // Switch to today tab
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="today"]').classList.add('active');
+      document.getElementById('today').classList.add('active');
+    }
+
+    // ===== InBody Tab =====
+    async function renderInBody() {
+      const container = document.getElementById('inbodyContent');
+      const empty = document.getElementById('emptyInbody');
+
+      if (!state.manifest || state.manifest.inbody.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      const dates = [...state.manifest.inbody].sort().reverse();
+      // Load all inbody data
+      const allData = [];
+      for (const d of dates) {
+        if (!state.inbodyCache[d]) {
+          state.inbodyCache[d] = await fetchJSON(`data/inbody/${d}.json`);
+        }
+        if (state.inbodyCache[d]) allData.push(state.inbodyCache[d]);
+      }
+
+      if (allData.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      const latest = allData[0];
+      let html = '';
+
+      // Latest card
+      html += `
+        <div class="inbody-latest">
+          <div class="inbody-title">📊 最新 InBody 數據 — ${latest.date}</div>
+          <div class="inbody-metrics">
+            <div class="inbody-metric">
+              <div class="metric-label">體重</div>
+              <div class="metric-value">${latest.weight || '-'}</div>
+              <div class="metric-unit">kg</div>
+            </div>
+            <div class="inbody-metric">
+              <div class="metric-label">體脂率</div>
+              <div class="metric-value">${latest.bodyFatPercent || '-'}</div>
+              <div class="metric-unit">%</div>
+            </div>
+            <div class="inbody-metric">
+              <div class="metric-label">骨骼肌量</div>
+              <div class="metric-value">${latest.muscleMass || '-'}</div>
+              <div class="metric-unit">kg</div>
+            </div>
+            <div class="inbody-metric">
+              <div class="metric-label">BMI</div>
+              <div class="metric-value">${latest.bmi || '-'}</div>
+              <div class="metric-unit"></div>
+            </div>
+            <div class="inbody-metric">
+              <div class="metric-label">基礎代謝</div>
+              <div class="metric-value">${latest.basalMetabolicRate || '-'}</div>
+              <div class="metric-unit">kcal</div>
+            </div>
+            <div class="inbody-metric">
+              <div class="metric-label">內臟脂肪</div>
+              <div class="metric-value">${latest.visceralFat || '-'}</div>
+              <div class="metric-unit">等級</div>
+            </div>
+          </div>
+          ${latest.image ? `
+            <div class="inbody-photo-container">
+              <img src="${latest.image}" alt="InBody 報告" loading="lazy" onclick="openLightbox('${latest.image}')" style="margin-top:16px; max-height:400px;">
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      // Trend chart (if more than 1 data point)
+      if (allData.length > 1) {
+        html += renderTrendChart(allData.reverse());
+      }
+
+      // History list
+      if (allData.length > 1) {
+        html += '<div class="card"><div class="card-title">📋 歷史測量</div>';
+        for (const item of [...allData].reverse()) {
+          if (item.date === latest.date) continue;
+          html += `
+            <div class="inbody-history-item" onclick="${item.image ? `openLightbox('${item.image}')` : ''}">
+              <div class="history-date-badge">
+                <span class="h-day">${new Date(item.date+'T00:00:00+08:00').getDate()}</span>
+                <span class="h-month">${new Date(item.date+'T00:00:00+08:00').getMonth()+1}月</span>
+              </div>
+              <div class="history-info">
+                <div class="h-date">${item.date}</div>
+                <div class="h-summary">${item.weight}kg · 體脂 ${item.bodyFatPercent}% · 肌肉 ${item.muscleMass}kg</div>
+              </div>
+            </div>
+          `;
+        }
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderTrendChart(dataAsc) {
+      const w = 700, h = 200, pad = { top: 30, right: 60, bottom: 40, left: 50 };
+      const innerW = w - pad.left - pad.right;
+      const innerH = h - pad.top - pad.bottom;
+
+      const weights = dataAsc.map(d => d.weight);
+      const bodyFats = dataAsc.map(d => d.bodyFatPercent);
+      const minW = Math.floor(Math.min(...weights) - 2);
+      const maxW = Math.ceil(Math.max(...weights) + 2);
+      const minBF = Math.floor(Math.min(...bodyFats) - 2);
+      const maxBF = Math.ceil(Math.max(...bodyFats) + 2);
+
+      const xStep = dataAsc.length > 1 ? innerW / (dataAsc.length - 1) : innerW / 2;
+
+      function yW(v) { return pad.top + innerH - ((v - minW) / (maxW - minW)) * innerH; }
+      function yBF(v) { return pad.top + innerH - ((v - minBF) / (maxBF - minBF)) * innerH; }
+
+      let weightPath = dataAsc.map((d, i) => `${i === 0 ? 'M' : 'L'}${pad.left + i * xStep},${yW(d.weight)}`).join(' ');
+      let bfPath = dataAsc.map((d, i) => `${i === 0 ? 'M' : 'L'}${pad.left + i * xStep},${yBF(d.bodyFatPercent)}`).join(' ');
+
+      let dots = dataAsc.map((d, i) => {
+        const x = pad.left + i * xStep;
+        return `
+          <circle cx="${x}" cy="${yW(d.weight)}" r="4" fill="#1565C0" class="trend-dot"/>
+          <text x="${x}" y="${yW(d.weight) - 8}" text-anchor="middle" class="trend-value-label" fill="#1565C0">${d.weight}</text>
+          <circle cx="${x}" cy="${yBF(d.bodyFatPercent)}" r="4" fill="#FF6D00" class="trend-dot"/>
+          <text x="${x}" y="${yBF(d.bodyFatPercent) - 8}" text-anchor="middle" class="trend-value-label" fill="#FF6D00">${d.bodyFatPercent}</text>
+          <text x="${x}" y="${h - 8}" text-anchor="middle" class="trend-label">${d.date.slice(5)}</text>
+        `;
+      }).join('');
+
+      return `
+        <div class="inbody-chart-container">
+          <div class="card-title">📈 趨勢變化</div>
+          <svg class="trend-chart" viewBox="0 0 ${w} ${h}">
+            <!-- Grid -->
+            <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
+            <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${pad.left + innerW}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
+            <!-- Weight line -->
+            <path d="${weightPath}" class="trend-line" stroke="#1565C0"/>
+            <!-- Body fat line -->
+            <path d="${bfPath}" class="trend-line" stroke="#FF6D00"/>
+            ${dots}
+            <!-- Legend -->
+            <circle cx="${pad.left}" cy="12" r="5" fill="#1565C0"/>
+            <text x="${pad.left + 10}" y="16" class="trend-label" fill="#1565C0">體重 (kg)</text>
+            <circle cx="${pad.left + 90}" cy="12" r="5" fill="#FF6D00"/>
+            <text x="${pad.left + 100}" y="16" class="trend-label" fill="#FF6D00">體脂率 (%)</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    // ===== Goals Tab =====
+    function renderGoals() {
+      const g = state.goals;
+      if (!g) return;
+      document.getElementById('goalsContent').innerHTML = `
+        <div class="goal-item">
+          <span class="goal-label"><span class="goal-dot" style="background:var(--color-calories)"></span>每日熱量</span>
+          <span class="goal-value">${g.dailyCalories} <span class="goal-unit">kcal</span></span>
+        </div>
+        <div class="goal-item">
+          <span class="goal-label"><span class="goal-dot" style="background:var(--color-protein)"></span>蛋白質</span>
+          <span class="goal-value">${g.protein} <span class="goal-unit">g</span></span>
+        </div>
+        <div class="goal-item">
+          <span class="goal-label"><span class="goal-dot" style="background:var(--color-fat)"></span>脂肪（上限）</span>
+          <span class="goal-value">≤ ${g.fat} <span class="goal-unit">g</span></span>
+        </div>
+        <div class="goal-item">
+          <span class="goal-label"><span class="goal-dot" style="background:var(--color-carbs)"></span>碳水化合物</span>
+          <span class="goal-value">${g.carbs} <span class="goal-unit">g</span></span>
+        </div>
+        <div style="margin-top: 12px; padding: 12px; background: var(--md-surface-container-low); border-radius: var(--md-shape-sm); font-size: 13px; color: var(--md-on-surface-variant);">
+          📝 ${g.note || ''}
+        </div>
+      `;
+    }
+
+    // ===== Lightbox =====
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // ===== Init =====
+    async function init() {
+      const [goals, manifest] = await Promise.all([
+        fetchJSON('data/goals.json'),
+        fetchJSON('data/manifest.json')
+      ]);
+
+      state.goals = goals;
+      state.manifest = manifest;
+
+      const today = getTodayTaipei();
+      state.currentDate = today;
+      await loadDay(today);
+
+      if (manifest?.lastUpdated) {
+        const dt = new Date(manifest.lastUpdated);
+        document.getElementById('lastUpdated').textContent =
+          `最後更新：${dt.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "date": "2026-04-10",
+  "image": "images/inbody/2026-04-10.jpg",
+  "weight": 76.7,
+  "muscleMass": 28.0,
+  "bodyFat": 21.5,
+  "bodyFatPercent": 28.0,
+  "bmi": 27.6,
+  "basalMetabolicRate": 1563,
+  "visceralFat": 12.8,
+  "bodyWater": 38.5,
+  "waistHipRatio": 0.92,
+  "fitnessScore": 70,
+  "segmental": {
+    "rightArm": { "muscle": 2.8, "fat": 1.2 },
+    "leftArm": { "muscle": 2.7, "fat": 1.1 },
+    "trunk": { "muscle": 20.5, "fat": 10.5 },
+    "rightLeg": { "muscle": 7.8, "fat": 3.8 },
+    "leftLeg": { "muscle": 7.7, "fat": 3.7 }
+  },
+  "note": "InBody 230 健身工廠測量"
+}

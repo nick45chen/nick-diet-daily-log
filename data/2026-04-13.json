@@ -1,0 +1,43 @@
+{
+  "date": "2026-04-13",
+  "weight": null,
+  "meals": [
+    {
+      "type": "點心",
+      "time": null,
+      "items": [
+        {
+          "name": "7-11 溏心蛋紐奧良風味烤雞三明治",
+          "calories": 320,
+          "protein": 18,
+          "fat": 12,
+          "carbs": 35,
+          "note": "估算（7-11 三明治類）",
+          "image": "images/meals/2026-04-13-snack-1.jpg"
+        },
+        {
+          "name": "福樂超能蛋白（低脂·草莓口味）",
+          "calories": 150,
+          "protein": 21,
+          "fat": 4,
+          "carbs": 10,
+          "note": "包裝標示（21g 蛋白質）",
+          "image": null
+        }
+      ],
+      "subtotal": {
+        "calories": 470,
+        "protein": 39,
+        "fat": 16,
+        "carbs": 45
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 470,
+    "protein": 39,
+    "fat": 16,
+    "carbs": 45
+  },
+  "advice": "目前僅記錄一餐，熱量 470 / 2100 kcal（22%），剩餘空間充足。\n蛋白質已攝取 39g / 120g，建議午晚餐各補充 40g 蛋白質（如雞胸肉 + 水煮蛋）。\n脂肪 16g 控制良好，碳水可在正餐搭配糙米或地瓜補充。\n整體方向：今日蛋白質起步不錯，持續補充即可達標。"
+}
