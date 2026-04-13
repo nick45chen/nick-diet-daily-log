@@ -588,102 +588,9 @@
     </button>
   </nav>
 
-  <main>
-    <!-- ===== TODAY TAB ===== -->
-    <div id="today" class="tab-content active">
-      <!-- Date Nav -->
-      <div class="date-nav">
-        <button id="prevDay" aria-label="前一天">‹</button>
-        <div>
-          <div class="date-display" id="currentDate"></div>
-          <div class="date-weekday" id="currentWeekday"></div>
-        </div>
-        <button id="nextDay" aria-label="後一天">›</button>
-      </div>
-
-      <!-- Macro Summary -->
-      <div class="macro-grid" id="macroGrid">
-        <div class="macro-card calories">
-          <div class="macro-icon">🔥</div>
-          <div class="macro-label">熱量</div>
-          <div class="macro-value" id="totalCal">0</div>
-          <div class="macro-goal" id="goalCal"></div>
-          <div class="macro-bar"><div class="macro-bar-fill" id="barCal"></div></div>
-        </div>
-        <div class="macro-card protein">
-          <div class="macro-icon">🥩</div>
-          <div class="macro-label">蛋白質</div>
-          <div class="macro-value" id="totalProtein">0</div>
-          <div class="macro-goal" id="goalProtein"></div>
-          <div class="macro-bar"><div class="macro-bar-fill" id="barProtein"></div></div>
-        </div>
-        <div class="macro-card fat">
-          <div class="macro-icon">🧈</div>
-          <div class="macro-label">脂肪</div>
-          <div class="macro-value" id="totalFat">0</div>
-          <div class="macro-goal" id="goalFat"></div>
-          <div class="macro-bar"><div class="macro-bar-fill" id="barFat"></div></div>
-        </div>
-        <div class="macro-card carbs">
-          <div class="macro-icon">🍚</div>
-          <div class="macro-label">碳水</div>
-          <div class="macro-value" id="totalCarbs">0</div>
-          <div class="macro-goal" id="goalCarbs"></div>
-          <div class="macro-bar"><div class="macro-bar-fill" id="barCarbs"></div></div>
-        </div>
-      </div>
-
-      <!-- Meals Container -->
-      <div id="mealsContainer"></div>
-
-      <!-- Advice -->
-      <div id="adviceContainer"></div>
-
-      <!-- Empty State -->
-      <div id="emptyToday" class="empty-state" style="display:none;">
-        <div class="empty-icon">🍽️</div>
-        <h3>尚無今日記錄</h3>
-        <p>使用 Claude Code 上傳食物照片開始記錄吧！</p>
-      </div>
-    </div>
-
-    <!-- ===== HISTORY TAB ===== -->
-    <div id="history" class="tab-content">
-      <div class="card">
-        <div class="card-title">📅 歷史紀錄</div>
-        <ul class="history-list" id="historyList"></ul>
-        <div id="emptyHistory" class="empty-state" style="display:none;">
-          <div class="empty-icon">📝</div>
-          <h3>尚無歷史紀錄</h3>
-          <p>開始記錄你的每日飲食吧</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== INBODY TAB ===== -->
-    <div id="inbody" class="tab-content">
-      <div id="inbodyContent"></div>
-      <div id="emptyInbody" class="empty-state" style="display:none;">
-        <div class="empty-icon">📊</div>
-        <h3>尚無 InBody 資料</h3>
-        <p>上傳 InBody 報告照片來追蹤身體數據</p>
-      </div>
-    </div>
-
-    <!-- ===== GOALS TAB ===== -->
-    <div id="goals" class="tab-content">
-      <div class="card">
-        <div class="card-title">🎯 每日營養目標</div>
-        <div id="goalsContent"></div>
-      </div>
-      <div class="card" style="margin-top: 12px;">
-        <div class="card-title">📖 使用說明</div>
-        <div style="font-size: 14px; line-height: 1.8; color: var(--md-on-surface-variant);">
-          <p><strong>記錄飲食：</strong>在 Claude Code 中輸入食物照片路徑，AI 會自動辨識並記錄營養素。</p>
-          <p style="margin-top:8px;"><strong>記錄 InBody：</strong>上傳 InBody 報告照片，AI 會擷取身體數據。</p>
-          <p style="margin-top:8px;"><strong>部署更新：</strong>記錄完成後 git push 即可更新網頁。</p>
-        </div>
-      </div>
+  <main id="tabContainer">
+    <div class="card">
+      <div class="skeleton" style="height: 180px;"></div>
     </div>
   </main>
 
@@ -711,6 +618,12 @@
     const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
     const REQUEST_VERSION = Date.now().toString();
     const MANIFEST_POLL_MS = 60000;
+    const TAB_PARTIALS = [
+      'partials/today.html',
+      'partials/history.html',
+      'partials/inbody.html',
+      'partials/goals.html'
+    ];
 
     // ===== Utilities =====
     function formatDate(dateStr) {
@@ -782,31 +695,74 @@
       return null;
     }
 
-    // ===== Tab Switching =====
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-        if (btn.dataset.tab === 'history') renderHistory();
-        if (btn.dataset.tab === 'inbody') renderInBody();
-        if (btn.dataset.tab === 'goals') renderGoals();
-      });
-    });
-
-    // ===== Date Navigation =====
-    document.getElementById('prevDay').addEventListener('click', () => {
-      state.currentDate = addDays(state.currentDate, -1);
-      loadDay(state.currentDate);
-    });
-    document.getElementById('nextDay').addEventListener('click', () => {
-      const today = getTodayTaipei();
-      if (state.currentDate < today) {
-        state.currentDate = addDays(state.currentDate, 1);
-        loadDay(state.currentDate);
+    async function fetchHTML(url) {
+      try {
+        const res = await fetch(withCacheBust(url), { cache: 'no-store' });
+        if (!res.ok) return null;
+        return await res.text();
+      } catch {
+        return null;
       }
-    });
+    }
+
+    function renderShellError(message) {
+      document.getElementById('tabContainer').innerHTML = `
+        <div class="card">
+          <div class="empty-state" style="padding: 32px 20px;">
+            <div class="empty-icon">⚠️</div>
+            <h3>頁面載入失敗</h3>
+            <p>${message}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadTabPartials() {
+      const partials = await Promise.all(TAB_PARTIALS.map(path => fetchHTML(path)));
+      if (partials.some(partial => !partial)) {
+        renderShellError('部分內容檔案不存在，請確認 partials 目錄是否完整。');
+        return false;
+      }
+
+      document.getElementById('tabContainer').innerHTML = partials.join('\n');
+      return true;
+    }
+
+    async function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === tabId);
+      });
+
+      if (tabId === 'history') await renderHistory();
+      if (tabId === 'inbody') await renderInBody();
+      if (tabId === 'goals') renderGoals();
+    }
+
+    function setupTabNavigation() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await switchTab(btn.dataset.tab);
+        });
+      });
+    }
+
+    function setupDateNavigation() {
+      document.getElementById('prevDay').addEventListener('click', () => {
+        state.currentDate = addDays(state.currentDate, -1);
+        loadDay(state.currentDate);
+      });
+
+      document.getElementById('nextDay').addEventListener('click', () => {
+        const today = getTodayTaipei();
+        if (state.currentDate < today) {
+          state.currentDate = addDays(state.currentDate, 1);
+          loadDay(state.currentDate);
+        }
+      });
+    }
 
     // ===== Load & Render Day =====
     async function loadDay(dateStr, { forceRefresh = false } = {}) {
@@ -955,14 +911,10 @@
       list.innerHTML = html;
     }
 
-    function goToDay(dateStr) {
+    async function goToDay(dateStr) {
       state.currentDate = dateStr;
-      loadDay(dateStr);
-      // Switch to today tab
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector('[data-tab="today"]').classList.add('active');
-      document.getElementById('today').classList.add('active');
+      await loadDay(dateStr);
+      await switchTab('today');
     }
 
     // ===== InBody Tab =====
@@ -1179,6 +1131,12 @@
 
     // ===== Init =====
     async function init() {
+      const partialsLoaded = await loadTabPartials();
+      if (!partialsLoaded) return;
+
+      setupTabNavigation();
+      setupDateNavigation();
+
       const [goals, manifest] = await Promise.all([
         fetchJSON('data/goals.json'),
         fetchJSON('data/manifest.json')
@@ -1192,6 +1150,10 @@
       await loadDay(today);
 
       updateLastUpdatedLabel(manifest?.lastUpdated);
+      const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'today';
+      if (activeTab !== 'today') {
+        await switchTab(activeTab);
+      }
       window.setInterval(refreshManifest, MANIFEST_POLL_MS);
     }
 

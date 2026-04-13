@@ -1,0 +1,50 @@
+<div id="today" class="tab-content active">
+  <div class="date-nav">
+    <button id="prevDay" aria-label="前一天">‹</button>
+    <div>
+      <div class="date-display" id="currentDate"></div>
+      <div class="date-weekday" id="currentWeekday"></div>
+    </div>
+    <button id="nextDay" aria-label="後一天">›</button>
+  </div>
+
+  <div class="macro-grid" id="macroGrid">
+    <div class="macro-card calories">
+      <div class="macro-icon">🔥</div>
+      <div class="macro-label">熱量</div>
+      <div class="macro-value" id="totalCal">0</div>
+      <div class="macro-goal" id="goalCal"></div>
+      <div class="macro-bar"><div class="macro-bar-fill" id="barCal"></div></div>
+    </div>
+    <div class="macro-card protein">
+      <div class="macro-icon">🥩</div>
+      <div class="macro-label">蛋白質</div>
+      <div class="macro-value" id="totalProtein">0</div>
+      <div class="macro-goal" id="goalProtein"></div>
+      <div class="macro-bar"><div class="macro-bar-fill" id="barProtein"></div></div>
+    </div>
+    <div class="macro-card fat">
+      <div class="macro-icon">🧈</div>
+      <div class="macro-label">脂肪</div>
+      <div class="macro-value" id="totalFat">0</div>
+      <div class="macro-goal" id="goalFat"></div>
+      <div class="macro-bar"><div class="macro-bar-fill" id="barFat"></div></div>
+    </div>
+    <div class="macro-card carbs">
+      <div class="macro-icon">🍚</div>
+      <div class="macro-label">碳水</div>
+      <div class="macro-value" id="totalCarbs">0</div>
+      <div class="macro-goal" id="goalCarbs"></div>
+      <div class="macro-bar"><div class="macro-bar-fill" id="barCarbs"></div></div>
+    </div>
+  </div>
+
+  <div id="mealsContainer"></div>
+  <div id="adviceContainer"></div>
+
+  <div id="emptyToday" class="empty-state" style="display:none;">
+    <div class="empty-icon">🍽️</div>
+    <h3>尚無今日記錄</h3>
+    <p>使用 Claude Code 上傳食物照片開始記錄吧！</p>
+  </div>
+</div>
