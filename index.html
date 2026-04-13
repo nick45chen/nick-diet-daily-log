@@ -77,11 +77,87 @@
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
     }
     .app-header p {
       font-size: 13px;
       opacity: 0.85;
       margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+    .header-people {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      max-width: 100%;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      flex-wrap: wrap;
+    }
+    .header-person {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .header-person-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      padding: 4px;
+      object-fit: cover;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+      flex-shrink: 0;
+    }
+    .header-person-text {
+      min-width: 0;
+      text-align: left;
+      line-height: 1.2;
+    }
+    .header-person-role {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.72;
+    }
+    .header-person-name {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .header-person-note {
+      display: block;
+      font-size: 11px;
+      margin-top: 3px;
+      opacity: 0.86;
+      white-space: nowrap;
+    }
+    .header-link-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(0,55,49,0.18);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
     }
 
     /* ===== Tab Navigation ===== */
@@ -542,6 +618,25 @@
       .inbody-metrics { grid-template-columns: repeat(2, 1fr); }
       .macro-card .macro-value { font-size: 18px; }
       main { padding: 12px; }
+      .app-header {
+        padding: 24px 16px 18px;
+      }
+      .header-people {
+        width: 100%;
+        border-radius: 24px;
+        padding: 12px;
+      }
+      .header-person {
+        width: 100%;
+        justify-content: center;
+      }
+      .header-person-text {
+        text-align: center;
+      }
+      .header-link-pill {
+        min-width: 0;
+        width: 100%;
+      }
     }
 
     /* ===== Loading Skeleton ===== */
@@ -570,6 +665,25 @@
   <header class="app-header">
     <h1>🥗 Nick 飲食日誌</h1>
     <p>與教練同步 · 達成體態目標</p>
+    <div class="header-people" aria-label="教練 Charlie 與 Nick 角色介紹">
+      <div class="header-person">
+        <img class="header-person-avatar" src="images/avatars/charlie.svg" alt="教練 Charlie 頭像">
+        <div class="header-person-text">
+          <span class="header-person-role">Coach</span>
+          <span class="header-person-name">Charlie</span>
+          <span class="header-person-note">飲食調整與追蹤</span>
+        </div>
+      </div>
+      <span class="header-link-pill">一起達標</span>
+      <div class="header-person">
+        <img class="header-person-avatar" src="images/avatars/nick.svg" alt="Nick 頭像">
+        <div class="header-person-text">
+          <span class="header-person-role">Member</span>
+          <span class="header-person-name">Nick</span>
+          <span class="header-person-note">每日飲食與體態紀錄</span>
+        </div>
+      </div>
+    </div>
   </header>
 
   <!-- Tab Navigation -->
