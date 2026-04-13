@@ -8,47 +8,61 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* ===== Material 3 Design Tokens ===== */
+    /* ===== Notion + Material 3 Design Tokens ===== */
     :root {
-      --md-primary: #00BFA5;
-      --md-on-primary: #003731;
-      --md-primary-container: #A7F3EC;
-      --md-on-primary-container: #00201C;
-      --md-secondary: #FF6D00;
-      --md-on-secondary: #FFFFFF;
-      --md-secondary-container: #FFE0B2;
-      --md-tertiary: #7C4DFF;
-      --md-tertiary-container: #EDE7F6;
-      --md-error: #FF5252;
-      --md-error-container: #FFCDD2;
-      --md-surface: #FAFDFB;
-      --md-surface-dim: #D9DCD9;
-      --md-surface-container: #EDEEED;
-      --md-surface-container-low: #F3F5F3;
-      --md-surface-container-high: #E7E9E7;
-      --md-on-surface: #191C1B;
-      --md-on-surface-variant: #3F4946;
-      --md-outline: #6F7975;
-      --md-outline-variant: #BFC9C5;
-      --md-shadow: rgba(0,0,0,0.15);
+      --md-primary: #6b5c4b;
+      --md-on-primary: #faf7f2;
+      --md-primary-container: #e9e0d4;
+      --md-on-primary-container: #45392c;
+      --md-secondary: #867765;
+      --md-on-secondary: #fffdf8;
+      --md-secondary-container: #efe7db;
+      --md-tertiary: #617466;
+      --md-tertiary-container: #dce7dc;
+      --md-error: #b5544f;
+      --md-error-container: #f4ddda;
+      --md-surface: #f7f5f2;
+      --md-surface-dim: #e7e1d8;
+      --md-surface-bright: #fcfbf8;
+      --md-surface-container-lowest: #fffdfa;
+      --md-surface-container-low: #f5f1eb;
+      --md-surface-container: #eee8df;
+      --md-surface-container-high: #e6e0d7;
+      --md-surface-container-highest: #d9d2c8;
+      --md-on-surface: #37352f;
+      --md-on-surface-variant: #6b675f;
+      --md-outline: #b8b1a5;
+      --md-outline-variant: #e2dbd1;
+      --md-shadow: rgba(55, 53, 47, 0.08);
 
-      --md-shape-sm: 8px;
-      --md-shape-md: 12px;
-      --md-shape-lg: 16px;
-      --md-shape-xl: 28px;
+      --md-shape-sm: 10px;
+      --md-shape-md: 18px;
+      --md-shape-lg: 24px;
+      --md-shape-xl: 32px;
 
-      /* Macro colors */
-      --color-calories: #FF6D00;
-      --color-protein: #00BFA5;
-      --color-fat: #FF5252;
-      --color-carbs: #7C4DFF;
+      --md-elevation-1: 0 1px 2px var(--md-shadow), 0 8px 24px rgba(55, 53, 47, 0.04);
+      --md-elevation-2: 0 10px 30px rgba(55, 53, 47, 0.07), 0 2px 8px rgba(55, 53, 47, 0.04);
+
+      --color-calories: #b76c47;
+      --color-calories-container: #f3e7dd;
+      --color-protein: #5f7a63;
+      --color-protein-container: #e6eee6;
+      --color-fat: #a76161;
+      --color-fat-container: #f3e3e3;
+      --color-carbs: #7d6d94;
+      --color-carbs-container: #ece7f2;
+      --chart-weight: #5f7a63;
+      --chart-body-fat: #b76c47;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Noto Sans TC', 'Inter', sans-serif;
-      background: var(--md-surface);
+      background:
+        radial-gradient(circle at top left, rgba(107, 92, 75, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(97, 116, 102, 0.08), transparent 28%),
+        linear-gradient(180deg, #fbfaf8 0%, var(--md-surface) 48%, #f1ede6 100%);
       color: var(--md-on-surface);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -56,34 +70,42 @@
 
     /* ===== Header ===== */
     .app-header {
-      background: linear-gradient(135deg, var(--md-primary), #00897B);
-      color: white;
-      padding: 24px 20px 20px;
+      width: min(860px, calc(100% - 32px));
+      margin: 16px auto 10px;
+      background:
+        radial-gradient(circle at top right, rgba(107, 92, 75, 0.18), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.84), rgba(244,239,231,0.94));
+      color: var(--md-on-surface);
+      padding: 30px 22px 22px;
       text-align: center;
       position: relative;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: var(--md-shape-xl);
+      box-shadow: var(--md-elevation-2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .app-header::after {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.08);
+      inset: auto auto -80px -60px;
+      width: 220px;
+      height: 220px;
+      background: rgba(107, 92, 75, 0.08);
       border-radius: 50%;
     }
     .app-header h1 {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.02em;
       position: relative;
       z-index: 1;
     }
     .app-header p {
       font-size: 13px;
-      opacity: 0.85;
-      margin-top: 4px;
+      color: var(--md-on-surface-variant);
+      margin-top: 6px;
       position: relative;
       z-index: 1;
     }
@@ -97,12 +119,12 @@
       margin-top: 18px;
       padding: 10px 14px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(255,255,255,0.9);
       max-width: 100%;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 24px rgba(55, 53, 47, 0.08);
       flex-wrap: wrap;
     }
     .header-person {
@@ -118,7 +140,7 @@
       background: rgba(255,255,255,0.95);
       padding: 4px;
       object-fit: cover;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+      box-shadow: 0 6px 14px rgba(55, 53, 47, 0.12);
       flex-shrink: 0;
     }
     .header-person-text {
@@ -131,7 +153,7 @@
       font-size: 11px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      opacity: 0.72;
+      color: var(--md-on-surface-variant);
     }
     .header-person-name {
       display: block;
@@ -143,7 +165,7 @@
       display: block;
       font-size: 11px;
       margin-top: 3px;
-      opacity: 0.86;
+      color: var(--md-on-surface-variant);
       white-space: nowrap;
     }
     .header-link-pill {
@@ -153,72 +175,86 @@
       min-width: 72px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: rgba(0,55,49,0.18);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: var(--md-primary);
+      color: var(--md-on-primary);
+      border: 1px solid rgba(107, 92, 75, 0.12);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.06em;
+      box-shadow: 0 6px 14px rgba(107, 92, 75, 0.18);
     }
 
     /* ===== Tab Navigation ===== */
     .tab-nav {
-      display: flex;
-      background: white;
-      border-bottom: 1px solid var(--md-outline-variant);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
       position: sticky;
-      top: 0;
+      top: 8px;
       z-index: 100;
-      box-shadow: 0 1px 3px var(--md-shadow);
+      width: min(860px, calc(100% - 32px));
+      margin: 0 auto;
+      padding-bottom: 10px;
     }
     .tab-btn {
-      flex: 1;
-      padding: 14px 8px;
-      border: none;
-      background: none;
+      min-height: 64px;
+      padding: 12px 8px 10px;
+      border: 1px solid rgba(255,255,255,0.72);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
       font-family: inherit;
       font-size: 13px;
       font-weight: 500;
       color: var(--md-on-surface-variant);
       cursor: pointer;
       position: relative;
-      transition: color 0.2s;
+      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: var(--md-elevation-1);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.88);
+      color: var(--md-on-surface);
     }
     .tab-btn.active {
-      color: var(--md-primary);
+      color: var(--md-on-primary-container);
       font-weight: 700;
-    }
-    .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 20%;
-      right: 20%;
-      height: 3px;
-      background: var(--md-primary);
-      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, var(--md-primary-container), #f2ebe0);
+      border-color: rgba(107, 92, 75, 0.18);
+      box-shadow: var(--md-elevation-2);
     }
     .tab-btn .tab-icon {
       display: block;
-      font-size: 20px;
-      margin-bottom: 2px;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+    .tab-btn:focus-visible,
+    .date-nav button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(107, 92, 75, 0.16);
     }
 
     /* ===== Main Content ===== */
     main {
-      max-width: 800px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 6px 16px 20px;
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
     /* ===== Cards ===== */
     .card {
-      background: white;
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 24px;
       padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 3px var(--md-shadow);
+      box-shadow: var(--md-elevation-1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .card-title {
       font-size: 16px;
@@ -227,6 +263,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--md-on-surface);
     }
 
     /* ===== Date Navigation ===== */
@@ -238,20 +275,25 @@
       margin-bottom: 16px;
     }
     .date-nav button {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid var(--md-outline-variant);
-      background: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.82);
       font-size: 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--md-on-surface);
-      transition: background 0.2s;
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: var(--md-elevation-1);
     }
-    .date-nav button:hover { background: var(--md-surface-container); }
+    .date-nav button:hover {
+      transform: translateY(-1px);
+      background: var(--md-surface-bright);
+      box-shadow: var(--md-elevation-2);
+    }
     .date-nav button:disabled { opacity: 0.3; cursor: default; }
     .date-nav .date-display {
       font-size: 18px;
@@ -263,6 +305,7 @@
       font-size: 13px;
       color: var(--md-on-surface-variant);
       font-weight: 400;
+      margin-top: 3px;
     }
 
     /* ===== Macro Summary ===== */
@@ -274,11 +317,13 @@
     }
     .macro-card {
       text-align: center;
-      padding: 14px 8px;
-      border-radius: var(--md-shape-md);
-      background: var(--md-surface-container-low);
+      padding: 16px 10px 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.88);
       position: relative;
       overflow: hidden;
+      box-shadow: var(--md-elevation-1);
     }
     .macro-card .macro-icon { font-size: 20px; margin-bottom: 4px; }
     .macro-card .macro-label {
@@ -302,30 +347,45 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 4px;
-      background: var(--md-outline-variant);
+      height: 5px;
+      background: rgba(255,255,255,0.75);
     }
     .macro-card .macro-bar-fill {
       height: 100%;
       border-radius: 0 2px 2px 0;
       transition: width 0.5s ease;
     }
+    .macro-card.calories {
+      background: linear-gradient(180deg, var(--color-calories-container), rgba(255,255,255,0.88));
+    }
     .macro-card.calories .macro-value { color: var(--color-calories); }
     .macro-card.calories .macro-bar-fill { background: var(--color-calories); }
+    .macro-card.protein {
+      background: linear-gradient(180deg, var(--color-protein-container), rgba(255,255,255,0.88));
+    }
     .macro-card.protein .macro-value { color: var(--color-protein); }
     .macro-card.protein .macro-bar-fill { background: var(--color-protein); }
+    .macro-card.fat {
+      background: linear-gradient(180deg, var(--color-fat-container), rgba(255,255,255,0.88));
+    }
     .macro-card.fat .macro-value { color: var(--color-fat); }
     .macro-card.fat .macro-bar-fill { background: var(--color-fat); }
+    .macro-card.carbs {
+      background: linear-gradient(180deg, var(--color-carbs-container), rgba(255,255,255,0.88));
+    }
     .macro-card.carbs .macro-value { color: var(--color-carbs); }
     .macro-card.carbs .macro-bar-fill { background: var(--color-carbs); }
 
     /* ===== Meal Card ===== */
     .meal-card {
-      background: white;
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.86);
+      border-radius: 24px;
       margin-bottom: 12px;
-      box-shadow: 0 1px 3px var(--md-shadow);
+      box-shadow: var(--md-elevation-1);
       overflow: hidden;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .meal-header {
       padding: 14px 16px;
@@ -333,6 +393,8 @@
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
+      border-bottom: 1px solid rgba(226, 219, 209, 0.7);
+      background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(245,241,235,0.4));
     }
     .meal-header .meal-type {
       font-weight: 600;
@@ -352,7 +414,7 @@
       display: flex;
       align-items: center;
       padding: 10px 0;
-      border-bottom: 1px solid var(--md-surface-container);
+      border-bottom: 1px solid rgba(226, 219, 209, 0.78);
       gap: 12px;
     }
     .meal-item:last-child { border-bottom: none; }
@@ -397,17 +459,23 @@
       object-fit: cover;
       flex-shrink: 0;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 18px rgba(55, 53, 47, 0.12);
     }
-    .meal-photos img:hover { transform: scale(1.05); }
+    .meal-photos img:hover {
+      transform: scale(1.04);
+      box-shadow: 0 14px 24px rgba(55, 53, 47, 0.16);
+    }
 
     /* ===== Advice Box ===== */
     .advice-box {
-      background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
-      border-radius: var(--md-shape-md);
+      background: linear-gradient(145deg, rgba(233,224,212,0.9), rgba(255,255,255,0.9));
+      border-radius: 24px;
       padding: 16px;
       margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.9);
       border-left: 4px solid var(--md-primary);
+      box-shadow: var(--md-elevation-1);
     }
     .advice-box .advice-title {
       font-size: 14px;
@@ -440,22 +508,23 @@
       display: flex;
       align-items: center;
       padding: 14px 16px;
-      background: white;
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.86);
+      border-radius: 22px;
       margin-bottom: 8px;
-      box-shadow: 0 1px 2px var(--md-shadow);
+      box-shadow: var(--md-elevation-1);
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
       gap: 14px;
     }
     .history-item:hover {
       transform: translateY(-1px);
-      box-shadow: 0 2px 6px var(--md-shadow);
+      box-shadow: var(--md-elevation-2);
     }
     .history-date-badge {
       width: 48px;
       height: 48px;
-      border-radius: var(--md-shape-md);
+      border-radius: 16px;
       background: var(--md-primary-container);
       color: var(--md-on-primary-container);
       display: flex;
@@ -479,7 +548,7 @@
     .history-info .h-summary {
       font-size: 12px;
       color: var(--md-on-surface-variant);
-      margin-top: 2px;
+      margin-top: 4px;
       font-family: 'Inter', sans-serif;
     }
     .history-arrow {
@@ -489,16 +558,20 @@
 
     /* ===== InBody Tab ===== */
     .inbody-latest {
-      background: linear-gradient(135deg, #E3F2FD, #E8EAF6);
-      border-radius: var(--md-shape-lg);
+      background:
+        radial-gradient(circle at top right, rgba(97, 116, 102, 0.18), transparent 26%),
+        linear-gradient(160deg, rgba(255,255,255,0.88), rgba(236,232,223,0.96));
+      border-radius: 28px;
       padding: 20px;
       margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.88);
+      box-shadow: var(--md-elevation-2);
     }
     .inbody-latest .inbody-title {
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 16px;
-      color: #1565C0;
+      color: var(--md-on-surface);
     }
     .inbody-metrics {
       display: grid;
@@ -508,8 +581,10 @@
     .inbody-metric {
       text-align: center;
       padding: 12px 8px;
-      background: rgba(255,255,255,0.7);
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.72);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.88);
+      box-shadow: 0 8px 20px rgba(55, 53, 47, 0.06);
     }
     .inbody-metric .metric-label {
       font-size: 11px;
@@ -520,7 +595,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 22px;
       font-weight: 700;
-      color: #1565C0;
+      color: var(--chart-weight);
     }
     .inbody-metric .metric-unit {
       font-size: 11px;
@@ -536,20 +611,22 @@
       cursor: pointer;
     }
     .inbody-chart-container {
-      background: white;
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(255,255,255,0.88);
+      border-radius: 24px;
       padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 3px var(--md-shadow);
+      box-shadow: var(--md-elevation-1);
     }
     .inbody-history-item {
       display: flex;
       align-items: center;
       padding: 12px 16px;
-      background: white;
-      border-radius: var(--md-shape-md);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.86);
+      border-radius: 22px;
       margin-bottom: 8px;
-      box-shadow: 0 1px 2px var(--md-shadow);
+      box-shadow: var(--md-elevation-1);
       cursor: pointer;
       gap: 12px;
     }
@@ -560,7 +637,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 0;
-      border-bottom: 1px solid var(--md-surface-container);
+      border-bottom: 1px solid rgba(226, 219, 209, 0.76);
     }
     .goal-item:last-child { border-bottom: none; }
     .goal-label {
@@ -590,11 +667,13 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(28, 27, 24, 0.76);
       z-index: 1000;
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .lightbox.active { display: flex; }
     .lightbox img {
@@ -607,7 +686,7 @@
     /* ===== Footer ===== */
     .app-footer {
       text-align: center;
-      padding: 20px;
+      padding: 16px 20px 22px;
       font-size: 12px;
       color: var(--md-on-surface-variant);
     }
@@ -618,8 +697,13 @@
       .inbody-metrics { grid-template-columns: repeat(2, 1fr); }
       .macro-card .macro-value { font-size: 18px; }
       main { padding: 12px; }
+      .tab-nav,
+      .app-header {
+        width: calc(100% - 24px);
+      }
       .app-header {
         padding: 24px 16px 18px;
+        margin-top: 12px;
       }
       .header-people {
         width: 100%;
@@ -1158,10 +1242,10 @@
       let dots = dataAsc.map((d, i) => {
         const x = pad.left + i * xStep;
         return `
-          <circle cx="${x}" cy="${yW(d.weight)}" r="4" fill="#1565C0" class="trend-dot"/>
-          <text x="${x}" y="${yW(d.weight) - 8}" text-anchor="middle" class="trend-value-label" fill="#1565C0">${d.weight}</text>
-          <circle cx="${x}" cy="${yBF(d.bodyFatPercent)}" r="4" fill="#FF6D00" class="trend-dot"/>
-          <text x="${x}" y="${yBF(d.bodyFatPercent) - 8}" text-anchor="middle" class="trend-value-label" fill="#FF6D00">${d.bodyFatPercent}</text>
+          <circle cx="${x}" cy="${yW(d.weight)}" r="4" fill="var(--chart-weight)" class="trend-dot"/>
+          <text x="${x}" y="${yW(d.weight) - 8}" text-anchor="middle" class="trend-value-label" fill="var(--chart-weight)">${d.weight}</text>
+          <circle cx="${x}" cy="${yBF(d.bodyFatPercent)}" r="4" fill="var(--chart-body-fat)" class="trend-dot"/>
+          <text x="${x}" y="${yBF(d.bodyFatPercent) - 8}" text-anchor="middle" class="trend-value-label" fill="var(--chart-body-fat)">${d.bodyFatPercent}</text>
           <text x="${x}" y="${h - 8}" text-anchor="middle" class="trend-label">${d.date.slice(5)}</text>
         `;
       }).join('');
@@ -1174,15 +1258,15 @@
             <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
             <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${pad.left + innerW}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
             <!-- Weight line -->
-            <path d="${weightPath}" class="trend-line" stroke="#1565C0"/>
+            <path d="${weightPath}" class="trend-line" stroke="var(--chart-weight)"/>
             <!-- Body fat line -->
-            <path d="${bfPath}" class="trend-line" stroke="#FF6D00"/>
+            <path d="${bfPath}" class="trend-line" stroke="var(--chart-body-fat)"/>
             ${dots}
             <!-- Legend -->
-            <circle cx="${pad.left}" cy="12" r="5" fill="#1565C0"/>
-            <text x="${pad.left + 10}" y="16" class="trend-label" fill="#1565C0">體重 (kg)</text>
-            <circle cx="${pad.left + 90}" cy="12" r="5" fill="#FF6D00"/>
-            <text x="${pad.left + 100}" y="16" class="trend-label" fill="#FF6D00">體脂率 (%)</text>
+            <circle cx="${pad.left}" cy="12" r="5" fill="var(--chart-weight)"/>
+            <text x="${pad.left + 10}" y="16" class="trend-label" fill="var(--chart-weight)">體重 (kg)</text>
+            <circle cx="${pad.left + 90}" cy="12" r="5" fill="var(--chart-body-fat)"/>
+            <text x="${pad.left + 100}" y="16" class="trend-label" fill="var(--chart-body-fat)">體脂率 (%)</text>
           </svg>
         </div>
       `;
