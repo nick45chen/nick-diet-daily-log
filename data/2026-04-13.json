@@ -3,6 +3,36 @@
   "weight": null,
   "meals": [
     {
+      "type": "午餐",
+      "time": "12:14",
+      "items": [
+        {
+          "name": "白飯 1 碗",
+          "calories": 280,
+          "protein": 5,
+          "fat": 1,
+          "carbs": 62,
+          "note": "估算（依照片估算，約 200g）",
+          "image": "images/meals/2026-04-13-lunch-1.jpg"
+        },
+        {
+          "name": "高麗菜豬肉湯鍋（含豆腐）",
+          "calories": 420,
+          "protein": 28,
+          "fat": 22,
+          "carbs": 18,
+          "note": "依照片估算（豬肉片、高麗菜、豆腐、清湯）",
+          "image": "images/meals/2026-04-13-lunch-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 700,
+        "protein": 33,
+        "fat": 23,
+        "carbs": 80
+      }
+    },
+    {
       "type": "點心",
       "time": null,
       "items": [
@@ -34,10 +64,10 @@
     }
   ],
   "dailyTotal": {
-    "calories": 470,
-    "protein": 39,
-    "fat": 16,
-    "carbs": 45
+    "calories": 1170,
+    "protein": 72,
+    "fat": 39,
+    "carbs": 125
   },
-  "advice": "目前僅記錄一餐，熱量 470 / 2100 kcal（22%），剩餘空間充足。\n蛋白質已攝取 39g / 120g，建議午晚餐各補充 40g 蛋白質（如雞胸肉 + 水煮蛋）。\n脂肪 16g 控制良好，碳水可在正餐搭配糙米或地瓜補充。\n整體方向：今日蛋白質起步不錯，持續補充即可達標。"
+  "advice": "熱量已攝取 1170 / 2100 kcal（56%）⚠️，今天仍有約 930 kcal 空間，晚餐可正常補足。\n蛋白質 72g / 120g ⚠️ 尚差 48g，建議晚餐補充雞胸肉、豆腐或高蛋白牛乳。\n脂肪 39g / ≤50g ✅ 仍在控制範圍內，晚餐避免炸物與濃厚醬料即可。\n碳水 125g / 293g ⚠️ 偏低，明日可在早餐或午餐搭配地瓜、白飯或香蕉。"
 }
