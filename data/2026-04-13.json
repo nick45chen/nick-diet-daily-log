@@ -3,36 +3,6 @@
   "weight": null,
   "meals": [
     {
-      "type": "午餐",
-      "time": "12:14",
-      "items": [
-        {
-          "name": "白飯 1 碗",
-          "calories": 280,
-          "protein": 5,
-          "fat": 1,
-          "carbs": 62,
-          "note": "估算（依照片估算，約 200g）",
-          "image": "images/meals/2026-04-13-lunch-1.jpg"
-        },
-        {
-          "name": "高麗菜豬肉湯鍋（含豆腐）",
-          "calories": 420,
-          "protein": 28,
-          "fat": 22,
-          "carbs": 18,
-          "note": "依照片估算（豬肉片、高麗菜、豆腐、清湯）",
-          "image": "images/meals/2026-04-13-lunch-1.jpg"
-        }
-      ],
-      "subtotal": {
-        "calories": 700,
-        "protein": 33,
-        "fat": 23,
-        "carbs": 80
-      }
-    },
-    {
       "type": "早餐",
       "time": "08:30",
       "items": [
@@ -60,6 +30,36 @@
         "protein": 39,
         "fat": 16,
         "carbs": 45
+      }
+    },
+    {
+      "type": "午餐",
+      "time": "12:14",
+      "items": [
+        {
+          "name": "白飯 1 碗",
+          "calories": 280,
+          "protein": 5,
+          "fat": 1,
+          "carbs": 62,
+          "note": "估算（依照片估算，約 200g）",
+          "image": "images/meals/2026-04-13-lunch-1.jpg"
+        },
+        {
+          "name": "高麗菜豬肉湯鍋（含豆腐）",
+          "calories": 420,
+          "protein": 28,
+          "fat": 22,
+          "carbs": 18,
+          "note": "依照片估算（豬肉片、高麗菜、豆腐、清湯）",
+          "image": "images/meals/2026-04-13-lunch-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 700,
+        "protein": 33,
+        "fat": 23,
+        "carbs": 80
       }
     },
     {
