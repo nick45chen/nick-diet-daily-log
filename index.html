@@ -379,7 +379,7 @@
     /* ===== Cost Summary ===== */
     .cost-summary {
       margin-bottom: 16px;
-      padding: 18px;
+      padding: 18px 20px;
       border-radius: 24px;
       background:
         radial-gradient(circle at top right, rgba(183, 108, 71, 0.14), transparent 28%),
@@ -389,66 +389,23 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
-    .cost-summary-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
     .cost-summary-kicker {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--color-calories);
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
-    .cost-summary-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--md-on-surface);
-    }
-    .cost-summary-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .cost-stat {
-      min-width: 0;
-      padding: 14px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(255,255,255,0.9);
-      box-shadow: 0 10px 24px rgba(55, 53, 47, 0.05);
-    }
-    .cost-stat-featured {
-      background: linear-gradient(180deg, rgba(243,231,221,0.9), rgba(255,255,255,0.84));
-    }
-    .cost-stat-label {
-      font-size: 11px;
-      color: var(--md-on-surface-variant);
-      margin-bottom: 6px;
-    }
-    .cost-stat-value {
+    .cost-summary-amount {
       font-family: 'Inter', sans-serif;
-      font-size: 22px;
+      font-size: 34px;
       font-weight: 700;
       color: var(--color-calories);
+      line-height: 1.1;
     }
-    .cost-stat-meal {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.45;
-      color: var(--md-on-surface);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .cost-stat-subvalue {
+    .cost-summary-note {
       margin-top: 6px;
-      font-family: 'Inter', sans-serif;
       font-size: 12px;
       color: var(--md-on-surface-variant);
     }
@@ -814,9 +771,9 @@
     /* ===== Responsive ===== */
     @media (max-width: 480px) {
       .macro-grid { grid-template-columns: repeat(2, 1fr); }
-      .cost-summary-grid { grid-template-columns: 1fr; }
       .inbody-metrics { grid-template-columns: repeat(2, 1fr); }
       .macro-card .macro-value { font-size: 18px; }
+      .cost-summary-amount { font-size: 30px; }
       main { padding: 12px; }
       .tab-nav,
       .app-header {
@@ -1000,36 +957,12 @@
       return Number.isFinite(amount) ? amount : null;
     }
 
-    function getMealDisplayLabel(meal) {
-      return meal?.displayName || meal?.type || '未命名餐點';
-    }
-
     function getDailyCost(data) {
       const total = Number(data?.dailyCostTotal?.amount);
       if (Number.isFinite(total)) return total;
       const costs = (data?.meals || []).map(getMealCost).filter(amount => amount !== null);
       if (!costs.length) return null;
       return roundCost(costs.reduce((sum, amount) => sum + amount, 0));
-    }
-
-    function getAverageMealCost(data) {
-      const mealsWithCost = (data?.meals || []).map(meal => getMealCost(meal)).filter(amount => amount !== null);
-      if (!mealsWithCost.length) return null;
-      return roundCost(mealsWithCost.reduce((sum, amount) => sum + amount, 0) / mealsWithCost.length);
-    }
-
-    function getHighestCostMeal(data) {
-      return (data?.meals || []).reduce((highest, meal) => {
-        const amount = getMealCost(meal);
-        if (amount === null) return highest;
-        if (!highest || amount > highest.amount) {
-          return {
-            amount,
-            label: getMealDisplayLabel(meal)
-          };
-        }
-        return highest;
-      }, null);
     }
 
     function withCacheBust(url, version = REQUEST_VERSION) {
@@ -1246,18 +1179,8 @@
         return;
       }
 
-      const averageCost = getAverageMealCost(data);
-      const highestCostMeal = getHighestCostMeal(data);
-
       summary.style.display = 'block';
       document.getElementById('totalCostValue').textContent = formatCurrencyTWD(totalCost);
-      document.getElementById('averageMealCostValue').textContent = averageCost !== null
-        ? formatCurrencyTWD(averageCost)
-        : '-';
-      document.getElementById('highestCostMealName').textContent = highestCostMeal?.label || '-';
-      document.getElementById('highestCostMealValue').textContent = highestCostMeal
-        ? formatCurrencyTWD(highestCostMeal.amount)
-        : '';
     }
 
     function updateMacros(totals) {
