@@ -61,13 +61,79 @@
         "fat": 16,
         "carbs": 45
       }
+    },
+    {
+      "type": "晚餐",
+      "time": "18:18",
+      "items": [
+        {
+          "name": "滷牛肉片",
+          "calories": 250,
+          "protein": 35,
+          "fat": 10,
+          "carbs": 2,
+          "note": "依照片估算（約 150g，偏瘦牛肉）",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        },
+        {
+          "name": "紫米飯",
+          "calories": 300,
+          "protein": 6,
+          "fat": 2,
+          "carbs": 66,
+          "note": "依照片估算（約 1 份便當飯量）",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        },
+        {
+          "name": "滷豆干",
+          "calories": 90,
+          "protein": 7,
+          "fat": 5,
+          "carbs": 3,
+          "note": "依照片估算（約 2 塊）",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        },
+        {
+          "name": "青菜與高麗菜",
+          "calories": 40,
+          "protein": 3,
+          "fat": 0,
+          "carbs": 7,
+          "note": "依照片估算（便當配菜）",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        },
+        {
+          "name": "地瓜",
+          "calories": 65,
+          "protein": 1,
+          "fat": 0,
+          "carbs": 15,
+          "note": "依照片估算（約 1 小塊）",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        },
+        {
+          "name": "水煮蛋 1/2 顆",
+          "calories": 38,
+          "protein": 4,
+          "fat": 3,
+          "carbs": 0,
+          "note": "依照片估算",
+          "image": "images/meals/2026-04-13-dinner-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 783,
+        "protein": 56,
+        "fat": 20,
+        "carbs": 93
+      }
     }
   ],
   "dailyTotal": {
-    "calories": 1170,
-    "protein": 72,
-    "fat": 39,
-    "carbs": 125
+    "calories": 1953,
+    "protein": 128,
+    "fat": 59,
+    "carbs": 218
   },
-  "advice": "熱量已攝取 1170 / 2100 kcal（56%）⚠️，今天仍有約 930 kcal 空間，晚餐可正常補足。\n蛋白質 72g / 120g ⚠️ 尚差 48g，建議晚餐補充雞胸肉、豆腐或高蛋白牛乳。\n脂肪 39g / ≤50g ✅ 仍在控制範圍內，晚餐避免炸物與濃厚醬料即可。\n碳水 125g / 293g ⚠️ 偏低，明日可在早餐或午餐搭配地瓜、白飯或香蕉。"
+  "advice": "熱量已攝取 1953 / 2100 kcal（93%）✅，整體接近目標，若今晚沒有再加餐也算穩定。\n蛋白質 128g / 120g ✅ 已達標並略有餘裕，對維持肌肉量有幫助。\n脂肪 59g / ≤50g ❌ 超出 9g，明日建議主菜改選雞胸肉、白肉魚或無糖豆漿，減少滷肉與加工豆製品比例。\n碳水 218g / 293g ⚠️ 尚差 75g，明日可在早餐或午餐增加地瓜、燕麥或白飯，讓訓練與恢復更穩定。"
 }
