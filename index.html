@@ -468,6 +468,18 @@
       font-weight: 600;
       color: var(--color-calories);
     }
+    .meal-subtotal-macros {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .meal-subtotal-macros span {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-on-surface-variant);
+    }
     .meal-body { padding: 0 16px 14px; }
     .meal-item {
       display: flex;
@@ -807,6 +819,11 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .meal-subtotal-macros {
+        justify-content: flex-start;
       }
       .history-topline {
         flex-direction: column;
@@ -1153,6 +1170,11 @@
               <div class="meal-header-totals">
                 ${mealCost !== null ? `<span class="meal-cost">${formatCurrencyTWD(mealCost)}</span>` : ''}
                 <span class="meal-kcal">${meal.subtotal?.calories || 0} kcal</span>
+                <div class="meal-subtotal-macros">
+                  <span>🥩 ${meal.subtotal?.protein || 0}g</span>
+                  <span>🧈 ${meal.subtotal?.fat || 0}g</span>
+                  <span>🍚 ${meal.subtotal?.carbs || 0}g</span>
+                </div>
               </div>
             </div>
             ${photos ? `<div class="meal-photos">${photos}</div>` : ''}
