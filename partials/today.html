@@ -39,6 +39,30 @@
     </div>
   </div>
 
+  <div id="costSummary" class="cost-summary" style="display:none;">
+    <div class="cost-summary-header">
+      <div>
+        <div class="cost-summary-kicker">每日餐費追蹤</div>
+        <div class="cost-summary-title">今天花了多少吃進去</div>
+      </div>
+    </div>
+    <div class="cost-summary-grid">
+      <div class="cost-stat">
+        <div class="cost-stat-label">每日總花費</div>
+        <div class="cost-stat-value" id="totalCostValue">NT$0</div>
+      </div>
+      <div class="cost-stat">
+        <div class="cost-stat-label">平均每餐</div>
+        <div class="cost-stat-value" id="averageMealCostValue">NT$0</div>
+      </div>
+      <div class="cost-stat cost-stat-featured">
+        <div class="cost-stat-label">最高單餐</div>
+        <div class="cost-stat-meal" id="highestCostMealName">-</div>
+        <div class="cost-stat-subvalue" id="highestCostMealValue"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="mealsContainer"></div>
   <div id="adviceContainer"></div>
 

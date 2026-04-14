@@ -376,6 +376,83 @@
     .macro-card.carbs .macro-value { color: var(--color-carbs); }
     .macro-card.carbs .macro-bar-fill { background: var(--color-carbs); }
 
+    /* ===== Cost Summary ===== */
+    .cost-summary {
+      margin-bottom: 16px;
+      padding: 18px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(183, 108, 71, 0.14), transparent 28%),
+        linear-gradient(155deg, rgba(255,255,255,0.9), rgba(246,239,231,0.92));
+      border: 1px solid rgba(255,255,255,0.88);
+      box-shadow: var(--md-elevation-1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .cost-summary-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .cost-summary-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-calories);
+      margin-bottom: 4px;
+    }
+    .cost-summary-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--md-on-surface);
+    }
+    .cost-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .cost-stat {
+      min-width: 0;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 10px 24px rgba(55, 53, 47, 0.05);
+    }
+    .cost-stat-featured {
+      background: linear-gradient(180deg, rgba(243,231,221,0.9), rgba(255,255,255,0.84));
+    }
+    .cost-stat-label {
+      font-size: 11px;
+      color: var(--md-on-surface-variant);
+      margin-bottom: 6px;
+    }
+    .cost-stat-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-calories);
+    }
+    .cost-stat-meal {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--md-on-surface);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .cost-stat-subvalue {
+      margin-top: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+    }
+
     /* ===== Meal Card ===== */
     .meal-card {
       background: rgba(255,255,255,0.78);
@@ -390,18 +467,43 @@
     .meal-header {
       padding: 14px 16px;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      cursor: pointer;
+      gap: 12px;
       border-bottom: 1px solid rgba(226, 219, 209, 0.7);
       background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(245,241,235,0.4));
     }
-    .meal-header .meal-type {
+    .meal-header-main {
+      min-width: 0;
+      flex: 1;
+    }
+    .meal-header .meal-title {
       font-weight: 600;
       font-size: 15px;
+      color: var(--md-on-surface);
+    }
+    .meal-header .meal-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--md-on-surface-variant);
+    }
+    .meal-header-totals {
       display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .meal-header .meal-cost {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--color-calories-container);
+      color: var(--color-calories);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
     }
     .meal-header .meal-kcal {
       font-family: 'Inter', sans-serif;
@@ -544,12 +646,30 @@
       font-weight: 500;
     }
     .history-info { flex: 1; }
+    .history-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
     .history-info .h-date { font-size: 14px; font-weight: 500; }
     .history-info .h-summary {
       font-size: 12px;
       color: var(--md-on-surface-variant);
       margin-top: 4px;
       font-family: 'Inter', sans-serif;
+    }
+    .history-cost {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--color-calories-container);
+      color: var(--color-calories);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
     }
     .history-arrow {
       color: var(--md-outline);
@@ -694,6 +814,7 @@
     /* ===== Responsive ===== */
     @media (max-width: 480px) {
       .macro-grid { grid-template-columns: repeat(2, 1fr); }
+      .cost-summary-grid { grid-template-columns: 1fr; }
       .inbody-metrics { grid-template-columns: repeat(2, 1fr); }
       .macro-card .macro-value { font-size: 18px; }
       main { padding: 12px; }
@@ -720,6 +841,19 @@
       .header-link-pill {
         min-width: 0;
         width: 100%;
+      }
+      .meal-header {
+        flex-direction: column;
+      }
+      .meal-header-totals {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .history-topline {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
 
@@ -849,6 +983,53 @@
     function pct(value, goal) {
       if (!goal) return 0;
       return Math.min(Math.round((value / goal) * 100), 100);
+    }
+
+    function roundCost(value) {
+      return Math.round(value * 1000) / 1000;
+    }
+
+    function formatCurrencyTWD(amount) {
+      const value = Number(amount);
+      if (!Number.isFinite(value)) return '';
+      return `NT$${Number(value.toFixed(3)).toString()}`;
+    }
+
+    function getMealCost(meal) {
+      const amount = Number(meal?.cost?.amount);
+      return Number.isFinite(amount) ? amount : null;
+    }
+
+    function getMealDisplayLabel(meal) {
+      return meal?.displayName || meal?.type || '未命名餐點';
+    }
+
+    function getDailyCost(data) {
+      const total = Number(data?.dailyCostTotal?.amount);
+      if (Number.isFinite(total)) return total;
+      const costs = (data?.meals || []).map(getMealCost).filter(amount => amount !== null);
+      if (!costs.length) return null;
+      return roundCost(costs.reduce((sum, amount) => sum + amount, 0));
+    }
+
+    function getAverageMealCost(data) {
+      const mealsWithCost = (data?.meals || []).map(meal => getMealCost(meal)).filter(amount => amount !== null);
+      if (!mealsWithCost.length) return null;
+      return roundCost(mealsWithCost.reduce((sum, amount) => sum + amount, 0) / mealsWithCost.length);
+    }
+
+    function getHighestCostMeal(data) {
+      return (data?.meals || []).reduce((highest, meal) => {
+        const amount = getMealCost(meal);
+        if (amount === null) return highest;
+        if (!highest || amount > highest.amount) {
+          return {
+            amount,
+            label: getMealDisplayLabel(meal)
+          };
+        }
+        return highest;
+      }, null);
     }
 
     function withCacheBust(url, version = REQUEST_VERSION) {
@@ -988,15 +1169,22 @@
         adviceContainer.innerHTML = '';
         emptyState.style.display = 'block';
         updateMacros(null);
+        updateCostSummary(null);
         return;
       }
 
       emptyState.style.display = 'none';
       updateMacros(data.dailyTotal);
+      updateCostSummary(data);
 
       // Render meals
       mealsContainer.innerHTML = data.meals.map(meal => {
         const icon = MEAL_ICONS[meal.type] || '🍽️';
+        const mealTitle = meal.displayName || `${icon} ${meal.type}`;
+        const mealMeta = meal.displayName
+          ? [ `${icon} ${meal.type}`, meal.time ].filter(Boolean).join(' · ')
+          : meal.time || '';
+        const mealCost = getMealCost(meal);
         const photos = meal.items.filter(i => i.image).map(i => {
           const imageUrl = getAssetURL(i.image);
           return `<img src="${imageUrl}" alt="${i.name}" loading="lazy" onclick="openLightbox('${imageUrl}')">`;
@@ -1020,8 +1208,14 @@
         return `
           <div class="meal-card">
             <div class="meal-header">
-              <span class="meal-type">${icon} ${meal.type}${meal.time ? ' · ' + meal.time : ''}</span>
-              <span class="meal-kcal">${meal.subtotal?.calories || 0} kcal</span>
+              <div class="meal-header-main">
+                <div class="meal-title">${mealTitle}</div>
+                ${mealMeta ? `<div class="meal-meta">${mealMeta}</div>` : ''}
+              </div>
+              <div class="meal-header-totals">
+                ${mealCost !== null ? `<span class="meal-cost">${formatCurrencyTWD(mealCost)}</span>` : ''}
+                <span class="meal-kcal">${meal.subtotal?.calories || 0} kcal</span>
+              </div>
             </div>
             ${photos ? `<div class="meal-photos">${photos}</div>` : ''}
             <div class="meal-body">${items}</div>
@@ -1040,6 +1234,30 @@
       } else {
         adviceContainer.innerHTML = '';
       }
+    }
+
+    function updateCostSummary(data) {
+      const summary = document.getElementById('costSummary');
+      if (!summary) return;
+
+      const totalCost = getDailyCost(data);
+      if (totalCost === null) {
+        summary.style.display = 'none';
+        return;
+      }
+
+      const averageCost = getAverageMealCost(data);
+      const highestCostMeal = getHighestCostMeal(data);
+
+      summary.style.display = 'block';
+      document.getElementById('totalCostValue').textContent = formatCurrencyTWD(totalCost);
+      document.getElementById('averageMealCostValue').textContent = averageCost !== null
+        ? formatCurrencyTWD(averageCost)
+        : '-';
+      document.getElementById('highestCostMealName').textContent = highestCostMeal?.label || '-';
+      document.getElementById('highestCostMealValue').textContent = highestCostMeal
+        ? formatCurrencyTWD(highestCostMeal.amount)
+        : '';
     }
 
     function updateMacros(totals) {
@@ -1088,6 +1306,7 @@
         const dayNum = date.getDate();
         const month = date.getMonth() + 1;
         const total = d?.dailyTotal;
+        const cost = getDailyCost(d);
         const summary = total
           ? `${total.calories} kcal · P ${total.protein}g · F ${total.fat}g · C ${total.carbs}g`
           : '無資料';
@@ -1099,7 +1318,10 @@
               <span class="h-month">${month}月</span>
             </div>
             <div class="history-info">
-              <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
+              <div class="history-topline">
+                <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
+                ${cost !== null ? `<span class="history-cost">${formatCurrencyTWD(cost)}</span>` : ''}
+              </div>
               <div class="h-summary">${summary}</div>
             </div>
             <span class="history-arrow">›</span>
