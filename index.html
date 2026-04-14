@@ -1118,14 +1118,19 @@
           ? [ `${icon} ${meal.type}`, meal.time ].filter(Boolean).join(' · ')
           : meal.time || '';
         const mealCost = getMealCost(meal);
-        const photos = meal.items.filter(i => i.image).map(i => {
+        const seenPhotos = new Set();
+        const photos = meal.items.filter(i => i.image).reduce((acc, i) => {
           const imageUrl = getAssetURL(i.image);
-          return `<img src="${imageUrl}" alt="${i.name}" loading="lazy" onclick="openLightbox('${imageUrl}')">`;
-        }).join('');
+          if (!seenPhotos.has(imageUrl)) {
+            seenPhotos.add(imageUrl);
+            acc += `<img src="${imageUrl}" alt="${i.name}" loading="lazy" onclick="openLightbox('${imageUrl}')">`;
+          }
+          return acc;
+        }, '');
 
         const items = meal.items.map(item => `
           <div class="meal-item">
-            ${item.image ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
+            ${item.image && !seenPhotos.has(getAssetURL(item.image)) ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
             <div class="meal-item-info">
               <div class="meal-item-name">${item.name}</div>
               <div class="meal-item-macros">
