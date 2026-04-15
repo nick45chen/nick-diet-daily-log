@@ -578,6 +578,56 @@
 
     /* ===== History Tab ===== */
     .history-list { list-style: none; }
+    .history-month-group + .history-month-group {
+      margin-top: 18px;
+    }
+    .history-month-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 4px 10px;
+    }
+    .history-month-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .history-month-label-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--md-on-surface);
+    }
+    .history-month-label-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--md-on-surface-variant);
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(255,255,255,0.88);
+      border-radius: 999px;
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+    .history-month-total {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--md-primary-container), #f2ebe0);
+      color: var(--md-on-primary-container);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(55, 53, 47, 0.06);
+    }
+    .history-month-items {
+      list-style: none;
+    }
+    .history-month-items .history-item:last-child {
+      margin-bottom: 0;
+    }
     .history-item {
       display: flex;
       align-items: center;
@@ -829,6 +879,10 @@
         justify-content: flex-start;
       }
       .history-topline {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .history-month-header {
         flex-direction: column;
         align-items: flex-start;
       }
@@ -1249,23 +1303,60 @@
       empty.style.display = 'none';
 
       const days = [...state.manifest.days].sort().reverse();
-      let html = '';
-      for (const day of days) {
+      const entries = await Promise.all(days.map(async (day) => {
         if (!state.dayCache[day]) {
           state.dayCache[day] = await fetchJSON(`data/${day}.json`);
         }
         const d = state.dayCache[day];
         const date = new Date(day + 'T00:00:00+08:00');
-        const dayNum = date.getDate();
-        const month = date.getMonth() + 1;
         const total = d?.dailyTotal;
-        const cost = getDailyCost(d);
-        const summary = total
+        return {
+          day,
+          date,
+          dayNum: date.getDate(),
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+          monthKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+          cost: getDailyCost(d),
+          summary: total
           ? `${total.calories} kcal · P ${total.protein}g · F ${total.fat}g · C ${total.carbs}g`
-          : '無資料';
+          : '無資料'
+        };
+      }));
 
-        html += `
-          <li class="history-item" onclick="goToDay('${day}')">
+      const monthGroups = [];
+      for (const entry of entries) {
+        let group = monthGroups[monthGroups.length - 1];
+        if (!group || group.monthKey !== entry.monthKey) {
+          group = {
+            monthKey: entry.monthKey,
+            year: entry.year,
+            month: entry.month,
+            totalCost: 0,
+            hasCost: false,
+            days: []
+          };
+          monthGroups.push(group);
+        }
+        if (entry.cost !== null) {
+          group.hasCost = true;
+          group.totalCost = roundCost(group.totalCost + entry.cost);
+        }
+        group.days.push(entry);
+      }
+
+      list.innerHTML = monthGroups.map(group => `
+        <li class="history-month-group">
+          <div class="history-month-header">
+            <div class="history-month-label">
+              <span class="history-month-label-text">${group.year} 年 ${group.month} 月</span>
+              <span class="history-month-label-count">${group.days.length} 天</span>
+            </div>
+            <span class="history-month-total">月總金額 ${group.hasCost ? formatCurrencyTWD(group.totalCost) : '無資料'}</span>
+          </div>
+          <ul class="history-month-items">
+            ${group.days.map(({ day, date, dayNum, month, cost, summary }) => `
+              <li class="history-item" onclick="goToDay('${day}')">
             <div class="history-date-badge">
               <span class="h-day">${dayNum}</span>
               <span class="h-month">${month}月</span>
@@ -1278,10 +1369,11 @@
               <div class="h-summary">${summary}</div>
             </div>
             <span class="history-arrow">›</span>
-          </li>
-        `;
-      }
-      list.innerHTML = html;
+              </li>
+            `).join('')}
+          </ul>
+        </li>
+      `).join('');
     }
 
     async function goToDay(dateStr) {
