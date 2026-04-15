@@ -981,6 +981,7 @@
     const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
     const REQUEST_VERSION = Date.now().toString();
     const MANIFEST_POLL_MS = 60000;
+    const PRIORITY_MEAL_IMAGE_LIMIT = 3;
     const TAB_PARTIALS = [
       'partials/today.html',
       'partials/history.html',
@@ -1057,6 +1058,30 @@
       if (!path) return path;
       const version = state.manifest?.lastUpdated || REQUEST_VERSION;
       return withCacheBust(path, version);
+    }
+
+    function getImageAttrs({ width, height, priority = 'lazy' } = {}) {
+      const attrs = [
+        `decoding="async"`,
+        `loading="${priority === 'high' ? 'eager' : 'lazy'}"`,
+        `fetchpriority="${priority}"`
+      ];
+      if (width) attrs.push(`width="${width}"`);
+      if (height) attrs.push(`height="${height}"`);
+      return attrs.join(' ');
+    }
+
+    function updateMealImagePreloads(imageUrls = []) {
+      document.querySelectorAll('link[data-meal-preload="true"]').forEach(link => link.remove());
+
+      imageUrls.slice(0, PRIORITY_MEAL_IMAGE_LIMIT).forEach(url => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = url;
+        link.setAttribute('data-meal-preload', 'true');
+        document.head.appendChild(link);
+      });
     }
 
     function updateLastUpdatedLabel(lastUpdated) {
@@ -1172,6 +1197,7 @@
 
       if (!data) {
         // No data
+        updateMealImagePreloads([]);
         mealsContainer.innerHTML = '';
         adviceContainer.innerHTML = '';
         emptyState.style.display = 'block';
@@ -1183,6 +1209,21 @@
       emptyState.style.display = 'none';
       updateMacros(data.dailyTotal);
       updateCostSummary(data);
+
+      const priorityImageUrls = [];
+      for (const meal of data.meals) {
+        for (const item of meal.items || []) {
+          if (!item.image) continue;
+          const imageUrl = getAssetURL(item.image);
+          if (priorityImageUrls.includes(imageUrl)) continue;
+          priorityImageUrls.push(imageUrl);
+          if (priorityImageUrls.length >= PRIORITY_MEAL_IMAGE_LIMIT) break;
+        }
+        if (priorityImageUrls.length >= PRIORITY_MEAL_IMAGE_LIMIT) break;
+      }
+      updateMealImagePreloads(priorityImageUrls);
+
+      let priorityImageCount = 0;
 
       // Render meals
       mealsContainer.innerHTML = data.meals.map(meal => {
@@ -1197,14 +1238,16 @@
           const imageUrl = getAssetURL(i.image);
           if (!seenPhotos.has(imageUrl)) {
             seenPhotos.add(imageUrl);
-            acc += `<img src="${imageUrl}" alt="${i.name}" loading="lazy" onclick="openLightbox('${imageUrl}')">`;
+            const priority = priorityImageCount < PRIORITY_MEAL_IMAGE_LIMIT ? 'high' : 'low';
+            priorityImageCount += 1;
+            acc += `<img src="${imageUrl}" alt="${i.name}" ${getImageAttrs({ width: 120, height: 90, priority })} onclick="openLightbox('${imageUrl}')">`;
           }
           return acc;
         }, '');
 
         const items = meal.items.map(item => `
           <div class="meal-item">
-            ${item.image && !seenPhotos.has(getAssetURL(item.image)) ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
+            ${item.image && !seenPhotos.has(getAssetURL(item.image)) ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" ${getImageAttrs({ width: 56, height: 56, priority: 'low' })} onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
             <div class="meal-item-info">
               <div class="meal-item-name">${item.name}</div>
               <div class="meal-item-macros">
