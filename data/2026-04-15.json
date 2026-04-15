@@ -37,17 +37,88 @@
         "fat": 18.9,
         "carbs": 38.1
       }
+    },
+    {
+      "type": "午餐",
+      "time": "12:09",
+      "displayName": "乾煎鱸魚菲力餐盒（加半熟鴨蛋＋炙燒撥殼蝦）",
+      "cost": {
+        "amount": 265,
+        "currency": "TWD"
+      },
+      "items": [
+        {
+          "name": "乾煎鱸魚菲力",
+          "calories": 225,
+          "protein": 32,
+          "fat": 9,
+          "carbs": 0,
+          "note": "依照片估算（同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        },
+        {
+          "name": "半熟鴨蛋 1 顆",
+          "calories": 130,
+          "protein": 9,
+          "fat": 10,
+          "carbs": 1,
+          "note": "依照片估算（同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        },
+        {
+          "name": "炙燒撥殼蝦 2 尾",
+          "calories": 35,
+          "protein": 7,
+          "fat": 0,
+          "carbs": 0,
+          "note": "依照片估算（同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        },
+        {
+          "name": "白飯",
+          "calories": 220,
+          "protein": 4,
+          "fat": 0,
+          "carbs": 49,
+          "note": "依照片估算（約 160g，同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        },
+        {
+          "name": "蔬菜配菜",
+          "calories": 55,
+          "protein": 3,
+          "fat": 1,
+          "carbs": 10,
+          "note": "依照片估算（高麗菜、青江菜、花椰菜、櫛瓜、玉米；同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        },
+        {
+          "name": "豆腐配菜",
+          "calories": 75,
+          "protein": 4,
+          "fat": 4,
+          "carbs": 4,
+          "note": "依照片估算（含少量醬料，同 2026-04-14 午餐）",
+          "image": "images/meals/2026-04-14-lunch-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 740,
+        "protein": 59,
+        "fat": 24,
+        "carbs": 64
+      }
     }
   ],
   "dailyTotal": {
-    "calories": 425.5,
-    "protein": 30.2,
-    "fat": 18.9,
-    "carbs": 38.1
+    "calories": 1165.5,
+    "protein": 89.2,
+    "fat": 42.9,
+    "carbs": 102.1
   },
   "dailyCostTotal": {
-    "amount": 75,
+    "amount": 340,
     "currency": "TWD"
   },
-  "advice": "熱量已攝取 425.5 / 2100 kcal（20%）⚠️ 目前仍偏低，午晚餐建議補足主食與完整蛋白質，避免全天熱量不足。\n蛋白質 30.2g / 120g ⚠️ 尚差 89.8g，接下來可優先補充雞胸肉、魚類、豆腐或高蛋白飲品。\n脂肪 18.9g / ≤50g ✅ 目前仍在合理範圍，後續維持少油烹調即可。\n碳水 38.1g / 293g ⚠️ 尚差 254.9g，若今天有訓練可在午餐加入白飯、地瓜或燕麥。"
+  "advice": "熱量已攝取 1165.5 / 2100 kcal（56%）⚠️ 尚差 934.5 kcal，晚餐建議補足主食與完整蛋白質，避免全天熱量過低。\n蛋白質 89.2g / 120g ⚠️ 尚差 30.8g，晚餐可優先補充雞胸肉、魚類、豆腐或高蛋白飲品。\n脂肪 42.9g / ≤50g ✅ 仍在目標內，但已接近上限，晚餐建議以清蒸、川燙、少油料理為主。\n碳水 102.1g / 293g ⚠️ 尚差 190.9g，若今天有訓練可補白飯、地瓜或燕麥，幫助恢復與補足能量。"
 }
