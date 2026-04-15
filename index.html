@@ -998,8 +998,8 @@
 
   <!-- Tab Navigation -->
   <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="today">
-      <span class="tab-icon">📋</span>今日
+    <button class="tab-btn active" data-tab="daily">
+      <span class="tab-icon">📋</span>每日
     </button>
     <button class="tab-btn" data-tab="history">
       <span class="tab-icon">📅</span>歷史
@@ -1044,7 +1044,7 @@
     const MANIFEST_POLL_MS = 60000;
     const PRIORITY_MEAL_IMAGE_LIMIT = 3;
     const TAB_PARTIALS = [
-      'partials/today.html',
+      'partials/daily.html',
       'partials/history.html',
       'partials/inbody.html',
       'partials/goals.html'
@@ -1275,7 +1275,7 @@
     function renderDay(data) {
       const mealsContainer = document.getElementById('mealsContainer');
       const adviceContainer = document.getElementById('adviceContainer');
-      const emptyState = document.getElementById('emptyToday');
+      const emptyState = document.getElementById('emptyDaily');
 
       if (!data) {
         // No data
@@ -1512,7 +1512,7 @@
     async function goToDay(dateStr) {
       state.currentDate = dateStr;
       await loadDay(dateStr);
-      await switchTab('today');
+      await switchTab('daily');
     }
 
     // ===== InBody Tab =====
@@ -1748,8 +1748,8 @@
       await loadDay(today);
 
       updateLastUpdatedLabel(manifest?.lastUpdated);
-      const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'today';
-      if (activeTab !== 'today') {
+      const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'daily';
+      if (activeTab !== 'daily') {
         await switchTab(activeTab);
       }
       window.setInterval(refreshManifest, MANIFEST_POLL_MS);
