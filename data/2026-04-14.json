@@ -108,17 +108,87 @@
         "fat": 24,
         "carbs": 64
       }
+    },
+    {
+      "type": "晚餐",
+      "time": "18:30",
+      "displayName": "Subway 辣豆瓣嫩牛潛艇堡",
+      "cost": {
+        "amount": 165,
+        "currency": "TWD"
+      },
+      "items": [
+        {
+          "name": "Subway 辣豆瓣嫩牛潛艇堡",
+          "calories": 420,
+          "protein": 28,
+          "fat": 10,
+          "carbs": 49,
+          "note": "估算（依照片估算，約 6 吋潛艇堡，含嫩牛、辣豆瓣醬與生菜番茄小黃瓜）",
+          "image": null
+        }
+      ],
+      "subtotal": {
+        "calories": 420,
+        "protein": 28,
+        "fat": 10,
+        "carbs": 49
+      }
+    },
+    {
+      "type": "消夜",
+      "time": "22:00",
+      "displayName": "燒烤（香菇 x2、小卷 x1、牛肉水蓮 x1）",
+      "cost": {
+        "amount": 255,
+        "currency": "TWD"
+      },
+      "items": [
+        {
+          "name": "烤香菇 2 串",
+          "calories": 60,
+          "protein": 4,
+          "fat": 1,
+          "carbs": 10,
+          "note": "依照片與品項估算（含少量烤醬）",
+          "image": null
+        },
+        {
+          "name": "烤小卷 1 串",
+          "calories": 90,
+          "protein": 13,
+          "fat": 3,
+          "carbs": 2,
+          "note": "依照片與品項估算",
+          "image": null
+        },
+        {
+          "name": "牛肉水蓮 1 串",
+          "calories": 180,
+          "protein": 12,
+          "fat": 13,
+          "carbs": 4,
+          "note": "依照片與品項估算（牛肉捲與少量烤醬）",
+          "image": null
+        }
+      ],
+      "subtotal": {
+        "calories": 330,
+        "protein": 29,
+        "fat": 17,
+        "carbs": 16
+      }
     }
   ],
   "dailyTotal": {
-    "calories": 1189,
-    "protein": 96.6,
-    "fat": 35.9,
-    "carbs": 111.9
+    "calories": 1939,
+    "protein": 153.6,
+    "fat": 62.9,
+    "carbs": 176.9
   },
   "dailyCostTotal": {
-    "amount": 340,
+    "amount": 760,
     "currency": "TWD"
   },
-  "advice": "熱量已攝取 1189 / 2100 kcal（57%）✅ 目前仍有餘裕安排晚餐，可維持穩定減脂節奏。\n蛋白質 96.6g / 120g ⚠️ 尚差 23.4g，晚餐建議補一份雞胸肉、豆腐或無糖高蛋白飲。\n脂肪 35.9g / ≤50g ✅ 目前控制穩定，晚餐避免再選高油烹調可把總量壓在目標內。\n碳水 111.9g / 293g ⚠️ 尚差 181.1g，若今天有訓練，之後可搭配白飯、地瓜或香蕉補足能量。"
+  "advice": "熱量已攝取 1939 / 2100 kcal（92%）✅ 接近目標，若當天活動量普通，整體仍在可控範圍內。\n蛋白質 153.6g / 120g ✅ 明顯達標，有助肌肉修復與維持飽足感。\n脂肪 62.9g / ≤50g ❌ 超出 12.9g，這餐燒烤的牛肉與醬料油脂較高，明日可優先選白肉、海鮮與少醬料理。\n碳水 176.9g / 293g ⚠️ 尚差 116.1g，若隔天有訓練可在早餐或午餐補地瓜、燕麥或白飯。"
 }
