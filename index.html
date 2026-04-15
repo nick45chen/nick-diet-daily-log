@@ -1062,10 +1062,34 @@
       return `${taipei.getFullYear()}-${String(taipei.getMonth()+1).padStart(2,'0')}-${String(taipei.getDate()).padStart(2,'0')}`;
     }
 
-    function addDays(dateStr, n) {
-      const d = new Date(dateStr + 'T00:00:00+08:00');
-      d.setDate(d.getDate() + n);
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    function getRecordedDays() {
+      return [...(state.manifest?.days || [])].sort();
+    }
+
+    function getAdjacentRecordedDates(dateStr) {
+      const recordedDays = getRecordedDays();
+      let prev = null;
+      let next = null;
+
+      for (const day of recordedDays) {
+        if (day < dateStr) prev = day;
+        if (day > dateStr) {
+          next = day;
+          break;
+        }
+      }
+
+      return { prev, next };
+    }
+
+    function updateDateNavigation(dateStr) {
+      const prevButton = document.getElementById('prevDay');
+      const nextButton = document.getElementById('nextDay');
+      if (!prevButton || !nextButton) return;
+
+      const { prev, next } = getAdjacentRecordedDates(dateStr);
+      prevButton.disabled = !prev;
+      nextButton.disabled = !next;
     }
 
     function pct(value, goal) {
@@ -1218,16 +1242,15 @@
 
     function setupDateNavigation() {
       document.getElementById('prevDay').addEventListener('click', () => {
-        state.currentDate = addDays(state.currentDate, -1);
-        loadDay(state.currentDate);
+        const { prev } = getAdjacentRecordedDates(state.currentDate);
+        if (!prev) return;
+        loadDay(prev);
       });
 
       document.getElementById('nextDay').addEventListener('click', () => {
-        const today = getTodayTaipei();
-        if (state.currentDate < today) {
-          state.currentDate = addDays(state.currentDate, 1);
-          loadDay(state.currentDate);
-        }
+        const { next } = getAdjacentRecordedDates(state.currentDate);
+        if (!next) return;
+        loadDay(next);
       });
     }
 
@@ -1236,9 +1259,7 @@
       state.currentDate = dateStr;
       document.getElementById('currentDate').textContent = dateStr;
       document.getElementById('currentWeekday').textContent = getWeekday(dateStr);
-
-      const today = getTodayTaipei();
-      document.getElementById('nextDay').disabled = (dateStr >= today);
+      updateDateNavigation(dateStr);
 
       if (forceRefresh || !state.dayCache[dateStr]) {
         state.dayCache[dateStr] = await fetchJSON(`data/${dateStr}.json`);
