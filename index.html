@@ -295,11 +295,16 @@
       box-shadow: var(--md-elevation-2);
     }
     .date-nav button:disabled { opacity: 0.3; cursor: default; }
+    .date-nav .date-label {
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
     .date-nav .date-display {
       font-size: 18px;
       font-weight: 600;
-      min-width: 180px;
-      text-align: center;
     }
     .date-nav .date-weekday {
       font-size: 13px;
