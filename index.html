@@ -592,6 +592,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
       min-width: 0;
     }
     .history-month-label-text {
@@ -599,28 +600,79 @@
       font-weight: 700;
       color: var(--md-on-surface);
     }
-    .history-month-label-count {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--md-on-surface-variant);
-      background: rgba(255,255,255,0.72);
-      border: 1px solid rgba(255,255,255,0.88);
+    .history-month-record-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 32px;
+      padding: 4px 6px 4px 12px;
       border-radius: 999px;
-      padding: 4px 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), var(--md-surface-container-low));
+      border: 1px solid var(--md-outline-variant);
+      box-shadow: 0 1px 2px rgba(55, 53, 47, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
       white-space: nowrap;
     }
-    .history-month-total {
+    .history-month-record-pill-label {
+      position: relative;
+      padding-left: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--md-on-surface-variant);
+      letter-spacing: 0.01em;
+    }
+    .history-month-record-pill-label::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      background: var(--md-primary);
+      box-shadow: 0 0 0 4px rgba(107, 92, 75, 0.12);
+    }
+    .history-month-record-pill-value {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--md-secondary-container);
+      color: var(--md-on-surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .history-month-metrics {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .history-month-stat {
       display: inline-flex;
       align-items: center;
       padding: 8px 12px;
       border-radius: 999px;
-      background: linear-gradient(180deg, var(--md-primary-container), #f2ebe0);
-      color: var(--md-on-primary-container);
+      border: 1px solid transparent;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
       box-shadow: 0 8px 20px rgba(55, 53, 47, 0.06);
+    }
+    .history-month-stat-total {
+      background: linear-gradient(180deg, var(--md-primary-container), #f2ebe0);
+      color: var(--md-on-primary-container);
+    }
+    .history-month-stat-average {
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), var(--md-surface-container-low));
+      border-color: var(--md-outline-variant);
+      color: var(--md-on-surface-variant);
+      box-shadow: 0 1px 2px rgba(55, 53, 47, 0.06), inset 0 1px 0 rgba(255,255,255,0.9);
     }
     .history-month-items {
       list-style: none;
@@ -885,6 +937,10 @@
       .history-month-header {
         flex-direction: column;
         align-items: flex-start;
+      }
+      .history-month-metrics {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
 
@@ -1377,6 +1433,7 @@
             month: entry.month,
             totalCost: 0,
             hasCost: false,
+            costDays: 0,
             days: []
           };
           monthGroups.push(group);
@@ -1384,6 +1441,7 @@
         if (entry.cost !== null) {
           group.hasCost = true;
           group.totalCost = roundCost(group.totalCost + entry.cost);
+          group.costDays += 1;
         }
         group.days.push(entry);
       }
@@ -1393,9 +1451,15 @@
           <div class="history-month-header">
             <div class="history-month-label">
               <span class="history-month-label-text">${group.year} 年 ${group.month} 月</span>
-              <span class="history-month-label-count">${group.days.length} 天</span>
+              <span class="history-month-record-pill" aria-label="${group.year} 年 ${group.month} 月共有 ${group.days.length} 天紀錄">
+                <span class="history-month-record-pill-label">已記錄</span>
+                <span class="history-month-record-pill-value">${group.days.length} 天</span>
+              </span>
             </div>
-            <span class="history-month-total">月總金額 ${group.hasCost ? formatCurrencyTWD(group.totalCost) : '無資料'}</span>
+            <div class="history-month-metrics">
+              <span class="history-month-stat history-month-stat-average">日均花費 ${group.costDays > 0 ? formatCurrencyTWD(roundCost(group.totalCost / group.costDays)) : '無資料'}</span>
+              <span class="history-month-stat history-month-stat-total">月總金額 ${group.hasCost ? formatCurrencyTWD(group.totalCost) : '無資料'}</span>
+            </div>
           </div>
           <ul class="history-month-items">
             ${group.days.map(({ day, date, dayNum, month, cost, summary }) => `
