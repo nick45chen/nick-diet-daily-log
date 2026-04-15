@@ -151,7 +151,7 @@
           "fat": 1,
           "carbs": 10,
           "note": "依照片與品項估算（含少量烤醬）",
-          "image": null
+          "image": "images/meals/2026-04-14-latenight-1.jpg"
         },
         {
           "name": "烤小卷 1 串",
@@ -160,7 +160,7 @@
           "fat": 3,
           "carbs": 2,
           "note": "依照片與品項估算",
-          "image": null
+          "image": "images/meals/2026-04-14-latenight-1.jpg"
         },
         {
           "name": "牛肉水蓮 1 串",
@@ -169,7 +169,7 @@
           "fat": 13,
           "carbs": 4,
           "note": "依照片與品項估算（牛肉捲與少量烤醬）",
-          "image": null
+          "image": "images/meals/2026-04-14-latenight-1.jpg"
         }
       ],
       "subtotal": {
