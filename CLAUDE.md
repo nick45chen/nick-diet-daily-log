@@ -25,7 +25,7 @@ Validate changes by loading the site locally, checking the today/history/InBody/
 
 `index.html` is the entire app — all CSS, HTML skeleton, and JavaScript live in this single file (~1500 lines). There is no framework, bundler, or external JS dependency.
 
-**Tab partials:** The four tab contents (today, history, inbody, goals) are loaded at startup via `fetch()` from `partials/*.html` and injected into the DOM. Edit the partial file for structural/markup changes; edit `index.html` for render logic or styling.
+**Tab partials:** The four tab contents (daily, history, inbody, goals) are loaded at startup via `fetch()` from `partials/*.html` and injected into the DOM. The "today" tab uses `partials/daily.html`. Edit the partial file for structural/markup changes; edit `index.html` for render logic or styling.
 
 **State & data flow:**
 - A global `state` object holds `goals`, `manifest`, `dayCache`, `inbodyCache`, and `currentDate`.
@@ -50,9 +50,11 @@ Validate changes by loading the site locally, checking the today/history/InBody/
 data/YYYY-MM-DD.json
 ```
 
-Top-level fields: `date`, `weight`, `meals[]`, `dailyTotal`, `dailyCostTotal`, `advice`.
+Top-level fields: `date`, `weight` (nullable), `meals[]`, `dailyTotal`, `dailyCostTotal` (optional), `advice`.
 
-Each meal: `type` (早餐/午餐/晚餐/點心/消夜), `time`, `displayName`, `cost` (amount/currency/note), `items[]`, `subtotal`.
+`advice` is a plain string with `\n`-separated lines of nutrition feedback — not an array.
+
+Each meal: `type` (早餐/午餐/晚餐/點心/消夜), `time`, `displayName`, `cost` (optional, `{ amount, currency, note }`), `items[]`, `subtotal`.
 
 Each item: `name`, `calories`, `protein`, `fat`, `carbs`, `note` (data source), `image`.
 
