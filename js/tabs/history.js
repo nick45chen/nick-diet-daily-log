@@ -85,7 +85,7 @@ export async function renderHistory() {
                 <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
                 ${cost !== null ? `<span class="history-cost">${formatCurrencyTWD(cost)}</span>` : ''}
               </div>
-              <div class="h-summary">${renderMacroSummaryHTML(total, state.goals || {})}</div>
+              <div class="h-summary">${renderMacroSummaryHTML(total, { ...(state.goals || {}), bmr: state.latestBmr })}</div>
             </div>
             <span class="history-arrow">›</span>
           </li>

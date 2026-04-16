@@ -48,7 +48,7 @@ export function getMacroStatus(type, value, g) {
   if (!value) return 'neutral';
   switch (type) {
     case 'calories': {
-      const bmr = 1563;
+      const bmr = g.bmr || 1563;
       const target = g.dailyCalories || 2100;
       if (value >= bmr && value <= target) return 'good';
       if (value < bmr) return 'warning';

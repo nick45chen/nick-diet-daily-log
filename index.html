@@ -110,7 +110,7 @@
 
       if (tabId === 'history') await renderHistory();
       if (tabId === 'inbody') await renderInBody();
-      if (tabId === 'goals') renderGoals(state.goals);
+      if (tabId === 'goals') renderGoals(state.goals, state.latestBmr);
     }
 
     function setupTabNavigation() {
@@ -161,9 +161,16 @@
       state.dayCache = {};
       state.inbodyCache = {};
 
+      if (latestManifest.inbody?.length > 0) {
+        const latestInbodyDate = [...latestManifest.inbody].sort().reverse()[0];
+        const latestInbody = await fetchJSON(`data/inbody/${latestInbodyDate}.json`);
+        if (latestInbody?.basalMetabolicRate) state.latestBmr = latestInbody.basalMetabolicRate;
+      }
+
       await loadDay(state.currentDate, { forceRefresh: true });
       if (document.getElementById('history').classList.contains('active')) await renderHistory();
       if (document.getElementById('inbody').classList.contains('active')) await renderInBody();
+      if (document.getElementById('goals').classList.contains('active')) renderGoals(state.goals, state.latestBmr);
     }
 
     async function init() {
@@ -180,6 +187,12 @@
 
       state.goals = goals;
       state.manifest = manifest;
+
+      if (manifest?.inbody?.length > 0) {
+        const latestInbodyDate = [...manifest.inbody].sort().reverse()[0];
+        const latestInbody = await fetchJSON(`data/inbody/${latestInbodyDate}.json`);
+        if (latestInbody?.basalMetabolicRate) state.latestBmr = latestInbody.basalMetabolicRate;
+      }
 
       const today = getTodayTaipei();
       await loadDay(today);

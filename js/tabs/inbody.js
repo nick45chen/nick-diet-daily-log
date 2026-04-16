@@ -31,6 +31,7 @@ export async function renderInBody() {
   }
 
   const latest = allData[0];
+  if (latest.basalMetabolicRate) state.latestBmr = latest.basalMetabolicRate;
   let html = '';
 
   html += `

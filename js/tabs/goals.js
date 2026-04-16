@@ -1,9 +1,10 @@
 // ===== Goals Tab =====
 // Receives goals as a parameter — no global state dependency.
 
-export function renderGoals(goals) {
+export function renderGoals(goals, bmr) {
   if (!goals) return;
   const g = goals;
+  const bmrValue = bmr || 1563;
   document.getElementById('goalsContent').innerHTML = `
     <div class="goal-item">
       <span class="goal-label"><span class="goal-dot" style="background:var(--color-calories)"></span>每日熱量</span>
@@ -34,8 +35,8 @@ export function renderGoals(goals) {
           熱量
         </div>
         <div class="goal-status-rules">
-          <span class="goal-status-chip good">達標　1563 ~ 2100 kcal</span>
-          <span class="goal-status-chip warning">偏低　&lt; 1563 kcal（低於基礎代謝）</span>
+          <span class="goal-status-chip good">達標　${bmrValue} ~ ${g.dailyCalories} kcal</span>
+          <span class="goal-status-chip warning">偏低　&lt; ${bmrValue} kcal（低於基礎代謝）</span>
           <span class="goal-status-chip danger">超標　&gt; 2100 kcal</span>
         </div>
       </div>

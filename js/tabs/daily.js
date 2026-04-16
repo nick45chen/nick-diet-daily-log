@@ -165,7 +165,7 @@ function applyMacroStatus(cardId, type, value, g) {
 }
 
 export function updateMacros(totals) {
-  const g = state.goals || {};
+  const g = { ...(state.goals || {}), bmr: state.latestBmr };
   const cal = totals?.calories || 0;
   const protein = totals?.protein || 0;
   const fat = totals?.fat || 0;
