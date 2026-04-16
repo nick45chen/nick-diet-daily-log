@@ -55,7 +55,7 @@
           "fat": 23,
           "carbs": 84,
           "note": "依照片與發票品項估算（含椰奶湯底、拉麵、甜不辣、蔬菜與豆腐）",
-          "image": null
+          "image": "images/meals/2026-04-16-lunch-1.jpg"
         },
         {
           "name": "香酥咖哩 G 腿",
@@ -64,7 +64,7 @@
           "fat": 11,
           "carbs": 19,
           "note": "依照片與發票品項估算（素 G 腿炸物，含咖哩粉調味）",
-          "image": null
+          "image": "images/meals/2026-04-16-lunch-1.jpg"
         },
         {
           "name": "椿陽豆腐",
@@ -73,7 +73,7 @@
           "fat": 8,
           "carbs": 7,
           "note": "依照片與發票品項估算（約 150g 豆腐與少量醬料）",
-          "image": null
+          "image": "images/meals/2026-04-16-lunch-1.jpg"
         }
       ],
       "subtotal": {
