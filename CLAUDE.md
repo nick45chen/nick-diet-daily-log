@@ -23,20 +23,27 @@ Validate changes by loading the site locally, checking the today/history/InBody/
 
 ## 架構
 
-`index.html` is the entire app — all CSS, HTML skeleton, and JavaScript live in this single file (~1500 lines). There is no framework, bundler, or external JS dependency.
+純 HTML/CSS/JS (ES Modules) 靜態網站，無 framework、bundler 或外部 JS 依賴。
 
-**Tab partials:** The four tab contents (daily, history, inbody, goals) are loaded at startup via `fetch()` from `partials/*.html` and injected into the DOM. The "today" tab uses `partials/daily.html`. Edit the partial file for structural/markup changes; edit `index.html` for render logic or styling.
+**分層架構：**
+- `index.html` — 極簡 shell（~24 行），只有 mount points 和 `<script src="js/app.js">`
+- `js/app.js` — App Shell：初始化、tab 切換、manifest polling
+- `js/data/` — Data Access Layer（Repository 模式）：所有資料存取集中於此，方便日後遷移至 server database
+- `js/logic/` — 純業務邏輯（零 DOM 依賴）：dates、costs、nutrition
+- `js/components/` — 可重用 UI 元件：`(props) => htmlString` 純函式
+- `js/tabs/` — 各 tab 的 render 邏輯，調用 data repos 和 components
+- `js/state.js` — 全域狀態物件和常數
+- `js/api.js` — 底層 HTTP 工具（fetchJSON、fetchHTML）
+- `js/utils.js` — Asset URL helpers 和 DOM helpers
+
+**Partials：**
+- `partials/header.html`、`tab-nav.html`、`lightbox.html`、`footer.html` — App Shell 的 HTML 片段
+- `partials/daily.html`、`history.html`、`inbody.html`、`goals.html` — 各 tab 的 HTML 骨架
 
 **State & data flow:**
-- A global `state` object holds `goals`, `manifest`, `dayCache`, `inbodyCache`, and `currentDate`.
-- `fetchJSON(url)` handles cache-busting with a timestamp suffix and falls back to the `data/` prefix variant.
-- `refreshManifest()` polls every `MANIFEST_POLL_MS` ms; if `lastUpdated` changed it clears caches and re-renders.
-
-**Render functions by tab:**
-- `loadDay(dateStr)` → today tab
-- `renderHistory()` → history tab
-- `renderInBody()` → InBody tab (SVG trend chart for weight/body fat)
-- `renderGoals()` → goals tab
+- `js/state.js` 的 `state` 物件持有 `goals`、`manifest`、`dayCache`、`inbodyCache`、`currentDate`、`latestBmr`
+- 所有資料存取透過 `js/data/*.js` 的 repository 函式（getDayData、getInBodyData、getGoals、getManifest）
+- `refreshManifest()` 每 60 秒 polling；若 `lastUpdated` 變更則清空 cache 並重新 render
 
 ## 資料格式
 
@@ -86,11 +93,15 @@ sips -Z 1200 images/inbody/YYYY-MM-DD.jpg
 
 圖片命名：`images/meals/YYYY-MM-DD-{breakfast|lunch|dinner|snack|latenight}-{n}.jpg`
 
-## 飲食記錄技能
+## Skills
 
-Use the `diet-tracker` skill (defined in `SKILL.md`) whenever logging meals or InBody data. The skill handles: meal-time inference, photo processing, nutrition estimation, JSON update, manifest update, and AI nutrition advice generation.
+Skills 定義在 `skills/` 目錄：
+- `skills/diet-record.md` — 飲食記錄流程（照片處理→營養估算→JSON 更新→AI 建議）
+- `skills/inbody-record.md` — InBody 身體數據記錄流程
+- `skills/nutrition-table.md` — 台灣常見食物營養參考表
 
-Trigger phrases: 「我吃了」、「記錄飲食」、「今天吃」、「飲食紀錄」、「記錄 InBody」, or any food photo upload.
+飲食記錄觸發條件：「我吃了」、「記錄飲食」、「今天吃」、「飲食紀錄」、「記錄今天」，或上傳食物照片。
+InBody 記錄觸發條件：「記錄 InBody」、「InBody」、「身體數據」，或上傳 InBody 報告照片。
 
 ## Commit 格式
 

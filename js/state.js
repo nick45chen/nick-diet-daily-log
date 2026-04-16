@@ -9,7 +9,6 @@ export const state = {
   latestBmr: null
 };
 
-export const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
 export const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
 export const MANIFEST_POLL_MS = 60000;
 export const PRIORITY_MEAL_IMAGE_LIMIT = 3;
@@ -18,4 +17,10 @@ export const TAB_PARTIALS = [
   'partials/history.html',
   'partials/inbody.html',
   'partials/goals.html'
+];
+export const SHELL_PARTIALS = [
+  { path: 'partials/header.html', mountId: 'headerMount' },
+  { path: 'partials/tab-nav.html', mountId: 'tabNavMount' },
+  { path: 'partials/lightbox.html', mountId: 'lightboxMount' },
+  { path: 'partials/footer.html', mountId: 'footerMount' }
 ];

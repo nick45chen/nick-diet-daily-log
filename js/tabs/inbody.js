@@ -1,8 +1,10 @@
 // ===== InBody Tab =====
 
 import { state } from '../state.js';
-import { fetchJSON } from '../api.js';
+import { getAllInBodyData } from '../data/inbody-repo.js';
 import { getAssetURL } from '../utils.js';
+import { MetricCard } from '../components/metric-card.js';
+import { DateBadge } from '../components/date-badge.js';
 
 export async function renderInBody() {
   const container = document.getElementById('inbodyContent');
@@ -15,14 +17,7 @@ export async function renderInBody() {
   }
   empty.style.display = 'none';
 
-  const dates = [...state.manifest.inbody].sort().reverse();
-  const allData = [];
-  for (const d of dates) {
-    if (!state.inbodyCache[d]) {
-      state.inbodyCache[d] = await fetchJSON(`data/inbody/${d}.json`);
-    }
-    if (state.inbodyCache[d]) allData.push(state.inbodyCache[d]);
-  }
+  const allData = await getAllInBodyData();
 
   if (allData.length === 0) {
     container.innerHTML = '';
@@ -38,36 +33,12 @@ export async function renderInBody() {
     <div class="inbody-latest">
       <div class="inbody-title">📊 最新 InBody 數據 — ${latest.date}</div>
       <div class="inbody-metrics">
-        <div class="inbody-metric">
-          <div class="metric-label">體重</div>
-          <div class="metric-value">${latest.weight || '-'}</div>
-          <div class="metric-unit">kg</div>
-        </div>
-        <div class="inbody-metric">
-          <div class="metric-label">體脂率</div>
-          <div class="metric-value">${latest.bodyFatPercent || '-'}</div>
-          <div class="metric-unit">%</div>
-        </div>
-        <div class="inbody-metric">
-          <div class="metric-label">骨骼肌量</div>
-          <div class="metric-value">${latest.muscleMass || '-'}</div>
-          <div class="metric-unit">kg</div>
-        </div>
-        <div class="inbody-metric">
-          <div class="metric-label">BMI</div>
-          <div class="metric-value">${latest.bmi || '-'}</div>
-          <div class="metric-unit"></div>
-        </div>
-        <div class="inbody-metric">
-          <div class="metric-label">基礎代謝</div>
-          <div class="metric-value">${latest.basalMetabolicRate || '-'}</div>
-          <div class="metric-unit">kcal</div>
-        </div>
-        <div class="inbody-metric">
-          <div class="metric-label">內臟脂肪</div>
-          <div class="metric-value">${latest.visceralFat || '-'}</div>
-          <div class="metric-unit">等級</div>
-        </div>
+        ${MetricCard({ label: '體重', value: latest.weight, unit: 'kg' })}
+        ${MetricCard({ label: '體脂率', value: latest.bodyFatPercent, unit: '%' })}
+        ${MetricCard({ label: '骨骼肌量', value: latest.muscleMass, unit: 'kg' })}
+        ${MetricCard({ label: 'BMI', value: latest.bmi, unit: '' })}
+        ${MetricCard({ label: '基礎代謝', value: latest.basalMetabolicRate, unit: 'kcal' })}
+        ${MetricCard({ label: '內臟脂肪', value: latest.visceralFat, unit: '等級' })}
       </div>
       ${latest.image ? `
         <div class="inbody-photo-container">
@@ -87,10 +58,7 @@ export async function renderInBody() {
       if (item.date === latest.date) continue;
       html += `
         <div class="inbody-history-item" onclick="${item.image ? `openLightbox('${getAssetURL(item.image)}')` : ''}">
-          <div class="history-date-badge">
-            <span class="h-day">${new Date(item.date+'T00:00:00+08:00').getDate()}</span>
-            <span class="h-month">${new Date(item.date+'T00:00:00+08:00').getMonth()+1}月</span>
-          </div>
+          ${DateBadge({ dateStr: item.date })}
           <div class="history-info">
             <div class="h-date">${item.date}</div>
             <div class="h-summary">${item.weight}kg · 體脂 ${item.bodyFatPercent}% · 肌肉 ${item.muscleMass}kg</div>

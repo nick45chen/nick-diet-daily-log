@@ -1,8 +1,16 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is a static GitHub Pages site. The UI lives in [index.html](/Users/knst/Documents/Nick/Project/nick-diet-daily-log/index.html), which contains the HTML, CSS, and JavaScript for rendering meal logs and InBody data.
+This repository is a static GitHub Pages site built with vanilla HTML/CSS/JS (ES Modules).
 
+- `index.html`: minimal app shell (~24 lines) with mount points
+- `js/app.js`: app initialization, tab switching, manifest polling
+- `js/data/`: Data Access Layer (Repository pattern) — all data fetching centralized here
+- `js/logic/`: pure business logic (zero DOM dependency) — nutrition, dates, costs
+- `js/components/`: reusable UI components as `(props) => htmlString` functions
+- `js/tabs/`: tab render logic using components and data repos
+- `partials/`: HTML fragments loaded dynamically (header, tab-nav, tabs, lightbox, footer)
+- `skills/`: Claude Code Skill definitions (diet-record, inbody-record, nutrition-table)
 - `data/YYYY-MM-DD.json`: daily meal records
 - `data/inbody/YYYY-MM-DD.json`: body measurement records
 - `data/manifest.json`: index of available dates and `lastUpdated`
@@ -26,7 +34,7 @@ Meal image naming must follow the existing pattern:
 - `images/meals/YYYY-MM-DD-breakfast-1.jpg`
 - Meal keys in JSON use Chinese labels such as `早餐`, `午餐`, `晚餐`, `點心`, `消夜`
 
-Prefer small, targeted edits in `index.html`; keep helper functions near the existing utilities section.
+Follow the layered architecture: data access in `js/data/`, business logic in `js/logic/`, UI components in `js/components/`, tab rendering in `js/tabs/`.
 
 ## Testing Guidelines
 There is no formal automated test suite yet. Validate changes by:

@@ -1,57 +1,9 @@
 // ===== Shared Utilities =====
+// Asset URL helpers and DOM helpers.
 
-import { state, WEEKDAYS, PRIORITY_MEAL_IMAGE_LIMIT } from './state.js';
+import { state, PRIORITY_MEAL_IMAGE_LIMIT } from './state.js';
 import { REQUEST_VERSION, withCacheBust } from './api.js';
-
-// ----- Date helpers -----
-
-export function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00+08:00');
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-export function getWeekday(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00+08:00');
-  return `星期${WEEKDAYS[d.getDay()]}`;
-}
-
-export function getTodayTaipei() {
-  const now = new Date();
-  const taipei = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
-  return `${taipei.getFullYear()}-${String(taipei.getMonth()+1).padStart(2,'0')}-${String(taipei.getDate()).padStart(2,'0')}`;
-}
-
-// ----- Navigation helpers -----
-
-function getRecordedDays() {
-  return [...(state.manifest?.days || [])].sort();
-}
-
-export function getAdjacentRecordedDates(dateStr) {
-  const recordedDays = getRecordedDays();
-  let prev = null;
-  let next = null;
-
-  for (const day of recordedDays) {
-    if (day < dateStr) prev = day;
-    if (day > dateStr) {
-      next = day;
-      break;
-    }
-  }
-
-  return { prev, next };
-}
-
-export function updateDateNavigation(dateStr) {
-  const prevButton = document.getElementById('prevDay');
-  const nextButton = document.getElementById('nextDay');
-  if (!prevButton || !nextButton) return;
-
-  const { prev, next } = getAdjacentRecordedDates(dateStr);
-  prevButton.disabled = !prev;
-  nextButton.disabled = !next;
-}
+import { getAdjacentRecordedDates } from './logic/dates.js';
 
 // ----- Math helpers -----
 
@@ -80,6 +32,17 @@ export function getImageAttrs({ width, height, priority = 'lazy' } = {}) {
 }
 
 // ----- DOM helpers -----
+
+export function updateDateNavigation(dateStr) {
+  const prevButton = document.getElementById('prevDay');
+  const nextButton = document.getElementById('nextDay');
+  if (!prevButton || !nextButton) return;
+
+  const sortedDays = [...(state.manifest?.days || [])].sort();
+  const { prev, next } = getAdjacentRecordedDates(dateStr, sortedDays);
+  prevButton.disabled = !prev;
+  nextButton.disabled = !next;
+}
 
 export function updateMealImagePreloads(imageUrls = []) {
   document.querySelectorAll('link[data-meal-preload="true"]').forEach(link => link.remove());
