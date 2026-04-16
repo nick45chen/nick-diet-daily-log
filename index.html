@@ -786,6 +786,10 @@
       margin-top: 4px;
       font-family: 'Inter', sans-serif;
     }
+    .history-info .h-summary .h-summary-sep {
+      color: var(--md-on-surface-variant);
+      font-weight: 400;
+    }
     .history-cost {
       display: inline-flex;
       align-items: center;
@@ -907,6 +911,62 @@
       font-size: 13px;
       color: var(--md-on-surface-variant);
       font-weight: 400;
+    }
+
+    /* ===== Goal Status Legend ===== */
+    .goal-status-legend {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--md-surface-container-low);
+      border-radius: var(--md-shape-sm);
+    }
+    .goal-status-legend-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--md-on-surface-variant);
+      margin-bottom: 10px;
+    }
+    .goal-status-macro {
+      margin-bottom: 10px;
+    }
+    .goal-status-macro:last-child { margin-bottom: 0; }
+    .goal-status-macro-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--md-on-surface);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .goal-status-rules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .goal-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .goal-status-chip.good {
+      background: rgba(58, 125, 68, 0.12);
+      color: #3a7d44;
+    }
+    .goal-status-chip.warning {
+      background: rgba(184, 92, 0, 0.12);
+      color: #b85c00;
+    }
+    .goal-status-chip.danger {
+      background: rgba(192, 57, 43, 0.12);
+      color: #c0392b;
     }
 
     /* ===== Image Lightbox ===== */
@@ -1515,6 +1575,31 @@
       badge.textContent = label;
     }
 
+    function renderMacroSummaryHTML(total, g) {
+      if (!total) return '<span>無資料</span>';
+      const STATUS_COLORS = {
+        good: '#3a7d44',
+        warning: '#b85c00',
+        danger: '#c0392b',
+        neutral: 'inherit'
+      };
+      const s = (type, value) => {
+        const st = getMacroStatus(type, value, g);
+        const color = STATUS_COLORS[st];
+        const bold = st !== 'neutral' ? 'font-weight:700;' : '';
+        return `style="color:${color};${bold}"`;
+      };
+      return [
+        `<span ${s('calories', total.calories)}>${total.calories} kcal</span>`,
+        `<span class="h-summary-sep"> · </span>`,
+        `<span ${s('protein', total.protein)}>P ${total.protein}g</span>`,
+        `<span class="h-summary-sep"> · </span>`,
+        `<span ${s('fat', total.fat)}>F ${total.fat}g</span>`,
+        `<span class="h-summary-sep"> · </span>`,
+        `<span ${s('carbs', total.carbs)}>C ${total.carbs}g</span>`,
+      ].join('');
+    }
+
     function updateMacros(totals) {
       const g = state.goals || {};
       const cal = totals?.calories || 0;
@@ -1571,9 +1656,7 @@
           year: date.getFullYear(),
           monthKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
           cost: getDailyCost(d),
-          summary: total
-          ? `${total.calories} kcal · P ${total.protein}g · F ${total.fat}g · C ${total.carbs}g`
-          : '無資料'
+          total
         };
       }));
 
@@ -1616,7 +1699,7 @@
             </div>
           </div>
           <ul class="history-month-items">
-            ${group.days.map(({ day, date, dayNum, month, cost, summary }) => `
+            ${group.days.map(({ day, date, dayNum, month, cost, total }) => `
               <li class="history-item" onclick="goToDay('${day}')">
             <div class="history-date-badge">
               <span class="h-day">${dayNum}</span>
@@ -1627,7 +1710,7 @@
                 <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
                 ${cost !== null ? `<span class="history-cost">${formatCurrencyTWD(cost)}</span>` : ''}
               </div>
-              <div class="h-summary">${summary}</div>
+              <div class="h-summary">${renderMacroSummaryHTML(total, state.goals || {})}</div>
             </div>
             <span class="history-arrow">›</span>
               </li>
@@ -1823,6 +1906,56 @@
         </div>
         <div style="margin-top: 12px; padding: 12px; background: var(--md-surface-container-low); border-radius: var(--md-shape-sm); font-size: 13px; color: var(--md-on-surface-variant);">
           📝 ${g.note || ''}
+        </div>
+
+        <div class="goal-status-legend">
+          <div class="goal-status-legend-title">🎨 顏色標示說明</div>
+
+          <div class="goal-status-macro">
+            <div class="goal-status-macro-name">
+              <span style="background:var(--color-calories-container);color:var(--color-calories);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🔥</span>
+              熱量
+            </div>
+            <div class="goal-status-rules">
+              <span class="goal-status-chip good">達標　1563 ~ 2100 kcal</span>
+              <span class="goal-status-chip warning">偏低　&lt; 1563 kcal（低於基礎代謝）</span>
+              <span class="goal-status-chip danger">超標　&gt; 2100 kcal</span>
+            </div>
+          </div>
+
+          <div class="goal-status-macro">
+            <div class="goal-status-macro-name">
+              <span style="background:var(--color-protein-container);color:var(--color-protein);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🥩</span>
+              蛋白質
+            </div>
+            <div class="goal-status-rules">
+              <span class="goal-status-chip good">達標　≥ ${g.protein}g</span>
+              <span class="goal-status-chip danger">不足　&lt; ${g.protein}g</span>
+            </div>
+          </div>
+
+          <div class="goal-status-macro">
+            <div class="goal-status-macro-name">
+              <span style="background:var(--color-fat-container);color:var(--color-fat);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🧈</span>
+              脂肪
+            </div>
+            <div class="goal-status-rules">
+              <span class="goal-status-chip good">達標　≤ ${g.fat}g</span>
+              <span class="goal-status-chip danger">超標　&gt; ${g.fat}g</span>
+            </div>
+          </div>
+
+          <div class="goal-status-macro">
+            <div class="goal-status-macro-name">
+              <span style="background:var(--color-carbs-container);color:var(--color-carbs);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🍚</span>
+              碳水
+            </div>
+            <div class="goal-status-rules">
+              <span class="goal-status-chip good">達標　${Math.round(g.carbs * 0.8)} ~ ${g.carbs}g（目標 80 ~ 100%）</span>
+              <span class="goal-status-chip warning">偏低　&lt; ${Math.round(g.carbs * 0.8)}g</span>
+              <span class="goal-status-chip danger">超標　&gt; ${g.carbs}g</span>
+            </div>
+          </div>
         </div>
       `;
     }
