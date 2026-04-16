@@ -69,117 +69,14 @@
   </footer>
 
   <script type="module">
-    import { REQUEST_VERSION, withCacheBust, getGitHubRawURL, fetchJSON, fetchHTML } from './js/api.js';
-    import { roundCost, formatCurrencyTWD, getMealCost, getDailyCost, getMacroStatus, renderMacroSummaryHTML } from './js/nutrition.js';
-
-    // ===== App State =====
-    const state = {
-      goals: null,
-      manifest: null,
-      currentDate: null,
-      dayCache: {},
-      inbodyCache: {}
-    };
-
-    const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
-    const MEAL_ICONS = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '點心': '🍪', '消夜': '🌃' };
-    const MANIFEST_POLL_MS = 60000;
-    const PRIORITY_MEAL_IMAGE_LIMIT = 3;
-    const TAB_PARTIALS = [
-      'partials/daily.html',
-      'partials/history.html',
-      'partials/inbody.html',
-      'partials/goals.html'
-    ];
-
-    // ===== Utilities =====
-    function formatDate(dateStr) {
-      const d = new Date(dateStr + 'T00:00:00+08:00');
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    }
-
-    function getWeekday(dateStr) {
-      const d = new Date(dateStr + 'T00:00:00+08:00');
-      return `星期${WEEKDAYS[d.getDay()]}`;
-    }
-
-    function getTodayTaipei() {
-      const now = new Date();
-      const taipei = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
-      return `${taipei.getFullYear()}-${String(taipei.getMonth()+1).padStart(2,'0')}-${String(taipei.getDate()).padStart(2,'0')}`;
-    }
-
-    function getRecordedDays() {
-      return [...(state.manifest?.days || [])].sort();
-    }
-
-    function getAdjacentRecordedDates(dateStr) {
-      const recordedDays = getRecordedDays();
-      let prev = null;
-      let next = null;
-
-      for (const day of recordedDays) {
-        if (day < dateStr) prev = day;
-        if (day > dateStr) {
-          next = day;
-          break;
-        }
-      }
-
-      return { prev, next };
-    }
-
-    function updateDateNavigation(dateStr) {
-      const prevButton = document.getElementById('prevDay');
-      const nextButton = document.getElementById('nextDay');
-      if (!prevButton || !nextButton) return;
-
-      const { prev, next } = getAdjacentRecordedDates(dateStr);
-      prevButton.disabled = !prev;
-      nextButton.disabled = !next;
-    }
-
-    function pct(value, goal) {
-      if (!goal) return 0;
-      return Math.min(Math.round((value / goal) * 100), 100);
-    }
-
-    function getAssetURL(path) {
-      if (!path) return path;
-      const version = state.manifest?.lastUpdated || REQUEST_VERSION;
-      return withCacheBust(path, version);
-    }
-
-    function getImageAttrs({ width, height, priority = 'lazy' } = {}) {
-      const attrs = [
-        `decoding="async"`,
-        `loading="${priority === 'high' ? 'eager' : 'lazy'}"`,
-        `fetchpriority="${priority}"`
-      ];
-      if (width) attrs.push(`width="${width}"`);
-      if (height) attrs.push(`height="${height}"`);
-      return attrs.join(' ');
-    }
-
-    function updateMealImagePreloads(imageUrls = []) {
-      document.querySelectorAll('link[data-meal-preload="true"]').forEach(link => link.remove());
-
-      imageUrls.slice(0, PRIORITY_MEAL_IMAGE_LIMIT).forEach(url => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = url;
-        link.setAttribute('data-meal-preload', 'true');
-        document.head.appendChild(link);
-      });
-    }
-
-    function updateLastUpdatedLabel(lastUpdated) {
-      if (!lastUpdated) return;
-      const dt = new Date(lastUpdated);
-      document.getElementById('lastUpdated').textContent =
-        `最後更新：${dt.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`;
-    }
+    // ===== App Shell =====
+    import { state, MANIFEST_POLL_MS, TAB_PARTIALS } from './js/state.js';
+    import { fetchJSON, fetchHTML } from './js/api.js';
+    import { getTodayTaipei, getAdjacentRecordedDates, updateLastUpdatedLabel } from './js/utils.js';
+    import { loadDay } from './js/tabs/daily.js';
+    import { renderHistory } from './js/tabs/history.js';
+    import { renderInBody } from './js/tabs/inbody.js';
+    import { renderGoals } from './js/tabs/goals.js';
 
     function renderShellError(message) {
       document.getElementById('tabContainer').innerHTML = `
@@ -199,7 +96,6 @@
         renderShellError('部分內容檔案不存在，請確認 partials 目錄是否完整。');
         return false;
       }
-
       document.getElementById('tabContainer').innerHTML = partials.join('\n');
       return true;
     }
@@ -214,7 +110,7 @@
 
       if (tabId === 'history') await renderHistory();
       if (tabId === 'inbody') await renderInBody();
-      if (tabId === 'goals') renderGoals();
+      if (tabId === 'goals') renderGoals(state.goals);
     }
 
     function setupTabNavigation() {
@@ -228,549 +124,28 @@
     function setupDateNavigation() {
       document.getElementById('prevDay').addEventListener('click', () => {
         const { prev } = getAdjacentRecordedDates(state.currentDate);
-        if (!prev) return;
-        loadDay(prev);
+        if (prev) loadDay(prev);
       });
-
       document.getElementById('nextDay').addEventListener('click', () => {
         const { next } = getAdjacentRecordedDates(state.currentDate);
-        if (!next) return;
-        loadDay(next);
+        if (next) loadDay(next);
       });
-    }
-
-    // ===== Load & Render Day =====
-    async function loadDay(dateStr, { forceRefresh = false } = {}) {
-      state.currentDate = dateStr;
-      document.getElementById('currentDate').textContent = dateStr;
-      document.getElementById('currentWeekday').textContent = getWeekday(dateStr);
-      updateDateNavigation(dateStr);
-
-      if (forceRefresh || !state.dayCache[dateStr]) {
-        state.dayCache[dateStr] = await fetchJSON(`data/${dateStr}.json`);
-      }
-      renderDay(state.dayCache[dateStr]);
-    }
-
-    function renderDay(data) {
-      const mealsContainer = document.getElementById('mealsContainer');
-      const adviceContainer = document.getElementById('adviceContainer');
-      const emptyState = document.getElementById('emptyDaily');
-
-      if (!data) {
-        // No data
-        updateMealImagePreloads([]);
-        mealsContainer.innerHTML = '';
-        adviceContainer.innerHTML = '';
-        emptyState.style.display = 'block';
-        updateMacros(null);
-        updateCostSummary(null);
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      updateMacros(data.dailyTotal);
-      updateCostSummary(data);
-
-      const priorityImageUrls = [];
-      for (const meal of data.meals) {
-        for (const item of meal.items || []) {
-          if (!item.image) continue;
-          const imageUrl = getAssetURL(item.image);
-          if (priorityImageUrls.includes(imageUrl)) continue;
-          priorityImageUrls.push(imageUrl);
-          if (priorityImageUrls.length >= PRIORITY_MEAL_IMAGE_LIMIT) break;
-        }
-        if (priorityImageUrls.length >= PRIORITY_MEAL_IMAGE_LIMIT) break;
-      }
-      updateMealImagePreloads(priorityImageUrls);
-
-      let priorityImageCount = 0;
-
-      // Render meals
-      mealsContainer.innerHTML = data.meals.map(meal => {
-        const icon = MEAL_ICONS[meal.type] || '🍽️';
-        const mealTitle = meal.displayName || `${icon} ${meal.type}`;
-        const mealMeta = meal.displayName
-          ? [ `${icon} ${meal.type}`, meal.time ].filter(Boolean).join(' · ')
-          : meal.time || '';
-        const mealCost = getMealCost(meal);
-        const seenPhotos = new Set();
-        const photos = meal.items.filter(i => i.image).reduce((acc, i) => {
-          const imageUrl = getAssetURL(i.image);
-          if (!seenPhotos.has(imageUrl)) {
-            seenPhotos.add(imageUrl);
-            const priority = priorityImageCount < PRIORITY_MEAL_IMAGE_LIMIT ? 'high' : 'low';
-            priorityImageCount += 1;
-            acc += `<img src="${imageUrl}" alt="${i.name}" ${getImageAttrs({ width: 120, height: 90, priority })} onclick="openLightbox('${imageUrl}')">`;
-          }
-          return acc;
-        }, '');
-
-        const items = meal.items.map(item => `
-          <div class="meal-item">
-            ${item.image && !seenPhotos.has(getAssetURL(item.image)) ? `<img class="meal-item-photo" src="${getAssetURL(item.image)}" alt="${item.name}" ${getImageAttrs({ width: 56, height: 56, priority: 'low' })} onclick="event.stopPropagation();openLightbox('${getAssetURL(item.image)}')">` : ''}
-            <div class="meal-item-info">
-              <div class="meal-item-name">${item.name}</div>
-              <div class="meal-item-macros">
-                <span>Cal ${item.calories}</span>
-                <span>Pro ${item.protein}g</span>
-                <span>Fat ${item.fat}g</span>
-                <span>Carb ${item.carbs}g</span>
-              </div>
-            </div>
-          </div>
-        `).join('');
-
-        return `
-          <div class="meal-card">
-            <div class="meal-header">
-              <div class="meal-header-main">
-                <div class="meal-title">${mealTitle}</div>
-                ${mealMeta ? `<div class="meal-meta">${mealMeta}</div>` : ''}
-              </div>
-              <div class="meal-header-totals">
-                ${mealCost !== null ? `<span class="meal-cost">${formatCurrencyTWD(mealCost)}</span>` : ''}
-                <span class="meal-kcal">${meal.subtotal?.calories || 0} kcal</span>
-                <div class="meal-subtotal-macros">
-                  <span>🥩 ${meal.subtotal?.protein || 0}g</span>
-                  <span>🧈 ${meal.subtotal?.fat || 0}g</span>
-                  <span>🍚 ${meal.subtotal?.carbs || 0}g</span>
-                </div>
-              </div>
-            </div>
-            ${photos ? `<div class="meal-photos">${photos}</div>` : ''}
-            <div class="meal-body">${items}</div>
-          </div>
-        `;
-      }).join('');
-
-      // Render advice
-      if (data.advice) {
-        adviceContainer.innerHTML = `
-          <div class="advice-box">
-            <div class="advice-title">💡 AI 營養師建議</div>
-            <div class="advice-text">${data.advice.replace(/\n/g, '<br>')}</div>
-          </div>
-        `;
-      } else {
-        adviceContainer.innerHTML = '';
-      }
-    }
-
-    function updateCostSummary(data) {
-      const summary = document.getElementById('costSummary');
-      if (!summary) return;
-
-      const totalCost = getDailyCost(data);
-      if (totalCost === null) {
-        summary.style.display = 'none';
-        return;
-      }
-
-      summary.style.display = 'block';
-      document.getElementById('totalCostValue').textContent = formatCurrencyTWD(totalCost);
-    }
-
-    function applyMacroStatus(cardId, type, value, g) {
-      const card = document.getElementById(cardId);
-      if (!card) return;
-      card.classList.remove('status-good', 'status-warning', 'status-danger');
-
-      let badge = card.querySelector('.macro-status-badge');
-      if (!badge) {
-        badge = document.createElement('div');
-        badge.className = 'macro-status-badge';
-        const goal = card.querySelector('.macro-goal');
-        if (goal) goal.after(badge);
-      }
-
-      if (!value) { badge.textContent = ''; return; }
-
-      const status = getMacroStatus(type, value, g);
-      if (status !== 'neutral') card.classList.add('status-' + status);
-
-      // Specific label for calories (low vs high danger differs)
-      let label = '';
-      if (status === 'good') label = '達標';
-      else if (status === 'warning') label = '偏低';
-      else if (status === 'danger') {
-        if (type === 'calories') label = value > (g.dailyCalories || 2100) ? '超標' : '偏低';
-        else if (type === 'protein') label = '不足';
-        else if (type === 'fat') label = '超標';
-        else if (type === 'carbs') label = '超標';
-      }
-      badge.textContent = label;
-    }
-
-    function updateMacros(totals) {
-      const g = state.goals || {};
-      const cal = totals?.calories || 0;
-      const protein = totals?.protein || 0;
-      const fat = totals?.fat || 0;
-      const carbs = totals?.carbs || 0;
-
-      document.getElementById('totalCal').textContent = cal;
-      document.getElementById('totalProtein').textContent = protein + 'g';
-      document.getElementById('totalFat').textContent = fat + 'g';
-      document.getElementById('totalCarbs').textContent = carbs + 'g';
-
-      document.getElementById('goalCal').textContent = `${g.dailyCalories || '-'} kcal 目標`;
-      document.getElementById('goalProtein').textContent = `≥ ${g.protein || '-'}g`;
-      document.getElementById('goalFat').textContent = `≤ ${g.fat || '-'}g`;
-      document.getElementById('goalCarbs').textContent = `${g.carbs || '-'}g 目標`;
-
-      document.getElementById('barCal').style.width = pct(cal, g.dailyCalories) + '%';
-      document.getElementById('barProtein').style.width = pct(protein, g.protein) + '%';
-      document.getElementById('barFat').style.width = pct(fat, g.fat) + '%';
-      document.getElementById('barCarbs').style.width = pct(carbs, g.carbs) + '%';
-
-      applyMacroStatus('macroCalories', 'calories', cal, g);
-      applyMacroStatus('macroProtein', 'protein', protein, g);
-      applyMacroStatus('macroFat', 'fat', fat, g);
-      applyMacroStatus('macroCarbs', 'carbs', carbs, g);
-    }
-
-    // ===== History Tab =====
-    async function renderHistory() {
-      const list = document.getElementById('historyList');
-      const empty = document.getElementById('emptyHistory');
-
-      if (!state.manifest || state.manifest.days.length === 0) {
-        list.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-      empty.style.display = 'none';
-
-      const days = [...state.manifest.days].sort().reverse();
-      const entries = await Promise.all(days.map(async (day) => {
-        if (!state.dayCache[day]) {
-          state.dayCache[day] = await fetchJSON(`data/${day}.json`);
-        }
-        const d = state.dayCache[day];
-        const date = new Date(day + 'T00:00:00+08:00');
-        const total = d?.dailyTotal;
-        return {
-          day,
-          date,
-          dayNum: date.getDate(),
-          month: date.getMonth() + 1,
-          year: date.getFullYear(),
-          monthKey: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
-          cost: getDailyCost(d),
-          total
-        };
-      }));
-
-      const monthGroups = [];
-      for (const entry of entries) {
-        let group = monthGroups[monthGroups.length - 1];
-        if (!group || group.monthKey !== entry.monthKey) {
-          group = {
-            monthKey: entry.monthKey,
-            year: entry.year,
-            month: entry.month,
-            totalCost: 0,
-            hasCost: false,
-            costDays: 0,
-            days: []
-          };
-          monthGroups.push(group);
-        }
-        if (entry.cost !== null) {
-          group.hasCost = true;
-          group.totalCost = roundCost(group.totalCost + entry.cost);
-          group.costDays += 1;
-        }
-        group.days.push(entry);
-      }
-
-      list.innerHTML = monthGroups.map(group => `
-        <li class="history-month-group">
-          <div class="history-month-header">
-            <div class="history-month-label">
-              <span class="history-month-label-text">${group.year} 年 ${group.month} 月</span>
-              <span class="history-month-record-pill" aria-label="${group.year} 年 ${group.month} 月共有 ${group.days.length} 天紀錄">
-                <span class="history-month-record-pill-label">已記錄</span>
-                <span class="history-month-record-pill-value">${group.days.length} 天</span>
-              </span>
-            </div>
-            <div class="history-month-metrics">
-              <span class="history-month-stat history-month-stat-average">日均花費 ${group.costDays > 0 ? formatCurrencyTWD(roundCost(group.totalCost / group.costDays)) : '無資料'}</span>
-              <span class="history-month-stat history-month-stat-total">月總金額 ${group.hasCost ? formatCurrencyTWD(group.totalCost) : '無資料'}</span>
-            </div>
-          </div>
-          <ul class="history-month-items">
-            ${group.days.map(({ day, date, dayNum, month, cost, total }) => `
-              <li class="history-item" onclick="goToDay('${day}')">
-            <div class="history-date-badge">
-              <span class="h-day">${dayNum}</span>
-              <span class="h-month">${month}月</span>
-            </div>
-            <div class="history-info">
-              <div class="history-topline">
-                <div class="h-date">${day} (${WEEKDAYS[date.getDay()]})</div>
-                ${cost !== null ? `<span class="history-cost">${formatCurrencyTWD(cost)}</span>` : ''}
-              </div>
-              <div class="h-summary">${renderMacroSummaryHTML(total, state.goals || {})}</div>
-            </div>
-            <span class="history-arrow">›</span>
-              </li>
-            `).join('')}
-          </ul>
-        </li>
-      `).join('');
     }
 
     async function goToDay(dateStr) {
-      state.currentDate = dateStr;
       await loadDay(dateStr);
       await switchTab('daily');
     }
 
-    // ===== InBody Tab =====
-    async function renderInBody() {
-      const container = document.getElementById('inbodyContent');
-      const empty = document.getElementById('emptyInbody');
-
-      if (!state.manifest || state.manifest.inbody.length === 0) {
-        container.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-      empty.style.display = 'none';
-
-      const dates = [...state.manifest.inbody].sort().reverse();
-      // Load all inbody data
-      const allData = [];
-      for (const d of dates) {
-        if (!state.inbodyCache[d]) {
-          state.inbodyCache[d] = await fetchJSON(`data/inbody/${d}.json`);
-        }
-        if (state.inbodyCache[d]) allData.push(state.inbodyCache[d]);
-      }
-
-      if (allData.length === 0) {
-        container.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-      }
-
-      const latest = allData[0];
-      let html = '';
-
-      // Latest card
-      html += `
-        <div class="inbody-latest">
-          <div class="inbody-title">📊 最新 InBody 數據 — ${latest.date}</div>
-          <div class="inbody-metrics">
-            <div class="inbody-metric">
-              <div class="metric-label">體重</div>
-              <div class="metric-value">${latest.weight || '-'}</div>
-              <div class="metric-unit">kg</div>
-            </div>
-            <div class="inbody-metric">
-              <div class="metric-label">體脂率</div>
-              <div class="metric-value">${latest.bodyFatPercent || '-'}</div>
-              <div class="metric-unit">%</div>
-            </div>
-            <div class="inbody-metric">
-              <div class="metric-label">骨骼肌量</div>
-              <div class="metric-value">${latest.muscleMass || '-'}</div>
-              <div class="metric-unit">kg</div>
-            </div>
-            <div class="inbody-metric">
-              <div class="metric-label">BMI</div>
-              <div class="metric-value">${latest.bmi || '-'}</div>
-              <div class="metric-unit"></div>
-            </div>
-            <div class="inbody-metric">
-              <div class="metric-label">基礎代謝</div>
-              <div class="metric-value">${latest.basalMetabolicRate || '-'}</div>
-              <div class="metric-unit">kcal</div>
-            </div>
-            <div class="inbody-metric">
-              <div class="metric-label">內臟脂肪</div>
-              <div class="metric-value">${latest.visceralFat || '-'}</div>
-              <div class="metric-unit">等級</div>
-            </div>
-          </div>
-          ${latest.image ? `
-            <div class="inbody-photo-container">
-              <img src="${getAssetURL(latest.image)}" alt="InBody 報告" loading="lazy" onclick="openLightbox('${getAssetURL(latest.image)}')" style="margin-top:16px; max-height:400px;">
-            </div>
-          ` : ''}
-        </div>
-      `;
-
-      // Trend chart (if more than 1 data point)
-      if (allData.length > 1) {
-        html += renderTrendChart(allData.reverse());
-      }
-
-      // History list
-      if (allData.length > 1) {
-        html += '<div class="card"><div class="card-title">📋 歷史測量</div>';
-        for (const item of [...allData].reverse()) {
-          if (item.date === latest.date) continue;
-          html += `
-            <div class="inbody-history-item" onclick="${item.image ? `openLightbox('${getAssetURL(item.image)}')` : ''}">
-              <div class="history-date-badge">
-                <span class="h-day">${new Date(item.date+'T00:00:00+08:00').getDate()}</span>
-                <span class="h-month">${new Date(item.date+'T00:00:00+08:00').getMonth()+1}月</span>
-              </div>
-              <div class="history-info">
-                <div class="h-date">${item.date}</div>
-                <div class="h-summary">${item.weight}kg · 體脂 ${item.bodyFatPercent}% · 肌肉 ${item.muscleMass}kg</div>
-              </div>
-            </div>
-          `;
-        }
-        html += '</div>';
-      }
-
-      container.innerHTML = html;
-    }
-
-    function renderTrendChart(dataAsc) {
-      const w = 700, h = 200, pad = { top: 30, right: 60, bottom: 40, left: 50 };
-      const innerW = w - pad.left - pad.right;
-      const innerH = h - pad.top - pad.bottom;
-
-      const weights = dataAsc.map(d => d.weight);
-      const bodyFats = dataAsc.map(d => d.bodyFatPercent);
-      const minW = Math.floor(Math.min(...weights) - 2);
-      const maxW = Math.ceil(Math.max(...weights) + 2);
-      const minBF = Math.floor(Math.min(...bodyFats) - 2);
-      const maxBF = Math.ceil(Math.max(...bodyFats) + 2);
-
-      const xStep = dataAsc.length > 1 ? innerW / (dataAsc.length - 1) : innerW / 2;
-
-      function yW(v) { return pad.top + innerH - ((v - minW) / (maxW - minW)) * innerH; }
-      function yBF(v) { return pad.top + innerH - ((v - minBF) / (maxBF - minBF)) * innerH; }
-
-      let weightPath = dataAsc.map((d, i) => `${i === 0 ? 'M' : 'L'}${pad.left + i * xStep},${yW(d.weight)}`).join(' ');
-      let bfPath = dataAsc.map((d, i) => `${i === 0 ? 'M' : 'L'}${pad.left + i * xStep},${yBF(d.bodyFatPercent)}`).join(' ');
-
-      let dots = dataAsc.map((d, i) => {
-        const x = pad.left + i * xStep;
-        return `
-          <circle cx="${x}" cy="${yW(d.weight)}" r="4" fill="var(--chart-weight)" class="trend-dot"/>
-          <text x="${x}" y="${yW(d.weight) - 8}" text-anchor="middle" class="trend-value-label" fill="var(--chart-weight)">${d.weight}</text>
-          <circle cx="${x}" cy="${yBF(d.bodyFatPercent)}" r="4" fill="var(--chart-body-fat)" class="trend-dot"/>
-          <text x="${x}" y="${yBF(d.bodyFatPercent) - 8}" text-anchor="middle" class="trend-value-label" fill="var(--chart-body-fat)">${d.bodyFatPercent}</text>
-          <text x="${x}" y="${h - 8}" text-anchor="middle" class="trend-label">${d.date.slice(5)}</text>
-        `;
-      }).join('');
-
-      return `
-        <div class="inbody-chart-container">
-          <div class="card-title">📈 趨勢變化</div>
-          <svg class="trend-chart" viewBox="0 0 ${w} ${h}">
-            <!-- Grid -->
-            <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
-            <line x1="${pad.left}" y1="${pad.top + innerH}" x2="${pad.left + innerW}" y2="${pad.top + innerH}" stroke="${'var(--md-outline-variant)'}" stroke-width="1"/>
-            <!-- Weight line -->
-            <path d="${weightPath}" class="trend-line" stroke="var(--chart-weight)"/>
-            <!-- Body fat line -->
-            <path d="${bfPath}" class="trend-line" stroke="var(--chart-body-fat)"/>
-            ${dots}
-            <!-- Legend -->
-            <circle cx="${pad.left}" cy="12" r="5" fill="var(--chart-weight)"/>
-            <text x="${pad.left + 10}" y="16" class="trend-label" fill="var(--chart-weight)">體重 (kg)</text>
-            <circle cx="${pad.left + 90}" cy="12" r="5" fill="var(--chart-body-fat)"/>
-            <text x="${pad.left + 100}" y="16" class="trend-label" fill="var(--chart-body-fat)">體脂率 (%)</text>
-          </svg>
-        </div>
-      `;
-    }
-
-    // ===== Goals Tab =====
-    function renderGoals() {
-      const g = state.goals;
-      if (!g) return;
-      document.getElementById('goalsContent').innerHTML = `
-        <div class="goal-item">
-          <span class="goal-label"><span class="goal-dot" style="background:var(--color-calories)"></span>每日熱量</span>
-          <span class="goal-value">${g.dailyCalories} <span class="goal-unit">kcal</span></span>
-        </div>
-        <div class="goal-item">
-          <span class="goal-label"><span class="goal-dot" style="background:var(--color-protein)"></span>蛋白質</span>
-          <span class="goal-value">${g.protein} <span class="goal-unit">g</span></span>
-        </div>
-        <div class="goal-item">
-          <span class="goal-label"><span class="goal-dot" style="background:var(--color-fat)"></span>脂肪（上限）</span>
-          <span class="goal-value">≤ ${g.fat} <span class="goal-unit">g</span></span>
-        </div>
-        <div class="goal-item">
-          <span class="goal-label"><span class="goal-dot" style="background:var(--color-carbs)"></span>碳水化合物</span>
-          <span class="goal-value">${g.carbs} <span class="goal-unit">g</span></span>
-        </div>
-        <div style="margin-top: 12px; padding: 12px; background: var(--md-surface-container-low); border-radius: var(--md-shape-sm); font-size: 13px; color: var(--md-on-surface-variant);">
-          📝 ${g.note || ''}
-        </div>
-
-        <div class="goal-status-legend">
-          <div class="goal-status-legend-title">🎨 顏色標示說明</div>
-
-          <div class="goal-status-macro">
-            <div class="goal-status-macro-name">
-              <span style="background:var(--color-calories-container);color:var(--color-calories);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🔥</span>
-              熱量
-            </div>
-            <div class="goal-status-rules">
-              <span class="goal-status-chip good">達標　1563 ~ 2100 kcal</span>
-              <span class="goal-status-chip warning">偏低　&lt; 1563 kcal（低於基礎代謝）</span>
-              <span class="goal-status-chip danger">超標　&gt; 2100 kcal</span>
-            </div>
-          </div>
-
-          <div class="goal-status-macro">
-            <div class="goal-status-macro-name">
-              <span style="background:var(--color-protein-container);color:var(--color-protein);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🥩</span>
-              蛋白質
-            </div>
-            <div class="goal-status-rules">
-              <span class="goal-status-chip good">達標　≥ ${g.protein}g</span>
-              <span class="goal-status-chip danger">不足　&lt; ${g.protein}g</span>
-            </div>
-          </div>
-
-          <div class="goal-status-macro">
-            <div class="goal-status-macro-name">
-              <span style="background:var(--color-fat-container);color:var(--color-fat);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🧈</span>
-              脂肪
-            </div>
-            <div class="goal-status-rules">
-              <span class="goal-status-chip good">達標　≤ ${g.fat}g</span>
-              <span class="goal-status-chip danger">超標　&gt; ${g.fat}g</span>
-            </div>
-          </div>
-
-          <div class="goal-status-macro">
-            <div class="goal-status-macro-name">
-              <span style="background:var(--color-carbs-container);color:var(--color-carbs);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;">🍚</span>
-              碳水
-            </div>
-            <div class="goal-status-rules">
-              <span class="goal-status-chip good">達標　${Math.round(g.carbs * 0.8)} ~ ${g.carbs}g（目標 80 ~ 100%）</span>
-              <span class="goal-status-chip warning">偏低　&lt; ${Math.round(g.carbs * 0.8)}g</span>
-              <span class="goal-status-chip danger">超標　&gt; ${g.carbs}g</span>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // ===== Lightbox =====
     function openLightbox(src) {
       document.getElementById('lightboxImg').src = src;
       document.getElementById('lightbox').classList.add('active');
     }
+
     function closeLightbox() {
       document.getElementById('lightbox').classList.remove('active');
     }
+
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
     async function refreshManifest() {
@@ -791,7 +166,6 @@
       if (document.getElementById('inbody').classList.contains('active')) await renderInBody();
     }
 
-    // ===== Init =====
     async function init() {
       const partialsLoaded = await loadTabPartials();
       if (!partialsLoaded) return;
@@ -808,14 +182,12 @@
       state.manifest = manifest;
 
       const today = getTodayTaipei();
-      state.currentDate = today;
       await loadDay(today);
 
       updateLastUpdatedLabel(manifest?.lastUpdated);
       const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'daily';
-      if (activeTab !== 'daily') {
-        await switchTab(activeTab);
-      }
+      if (activeTab !== 'daily') await switchTab(activeTab);
+
       window.setInterval(refreshManifest, MANIFEST_POLL_MS);
     }
 
