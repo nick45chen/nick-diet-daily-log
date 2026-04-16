@@ -54,7 +54,7 @@ Validate changes by loading the site locally, checking the today/history/InBody/
 ### 每日飲食 JSON 結構
 
 ```
-data/YYYY-MM-DD.json
+data/meals/YYYY/MM/YYYY-MM-DD.json
 ```
 
 Top-level fields: `date`, `weight` (nullable), `meals[]`, `dailyTotal`, `dailyCostTotal` (optional), `advice`.
@@ -70,9 +70,9 @@ Cost is recorded at the **meal level** (`meal.cost`), not per item. `dailyCostTo
 ### 其他資料檔案
 
 ```
-data/manifest.json         — { days: [...], inbody: [...], lastUpdated }
-data/goals.json            — { dailyCalories, protein, fat, carbs, note }
-data/inbody/YYYY-MM-DD.json — InBody measurement fields
+data/manifest.json               — { days: [...], inbody: [...], lastUpdated }
+data/goals.json                  — { dailyCalories, protein, fat, carbs, note }
+data/inbody/YYYY/MM/YYYY-MM-DD.json — InBody measurement fields
 ```
 
 ## 圖片處理

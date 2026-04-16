@@ -26,7 +26,7 @@ sips -Z 1200 "images/inbody/YYYY-MM-DD.jpg"
 
 ### Step 3：擷取數據
 
-建立 `data/inbody/YYYY-MM-DD.json`：
+建立 `data/inbody/YYYY/MM/YYYY-MM-DD.json`：
 
 ```json
 {

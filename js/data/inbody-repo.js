@@ -3,9 +3,14 @@
 import { state } from '../state.js';
 import { fetchJSON } from '../api.js';
 
+function inbodyPath(dateStr) {
+  const [yyyy, mm] = dateStr.split('-');
+  return `data/inbody/${yyyy}/${mm}/${dateStr}.json`;
+}
+
 export async function getInBodyData(dateStr, { forceRefresh = false } = {}) {
   if (!forceRefresh && state.inbodyCache[dateStr]) return state.inbodyCache[dateStr];
-  const data = await fetchJSON(`data/inbody/${dateStr}.json`);
+  const data = await fetchJSON(inbodyPath(dateStr));
   if (data) state.inbodyCache[dateStr] = data;
   return data;
 }
