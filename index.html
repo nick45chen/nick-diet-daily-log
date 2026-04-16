@@ -358,7 +358,7 @@
     .macro-card .macro-bar-fill {
       height: 100%;
       border-radius: 0 2px 2px 0;
-      transition: width 0.5s ease;
+      transition: width 0.5s ease, background 0.4s ease;
     }
     .macro-card.calories {
       background: linear-gradient(180deg, var(--color-calories-container), rgba(255,255,255,0.88));
@@ -380,6 +380,54 @@
     }
     .macro-card.carbs .macro-value { color: var(--color-carbs); }
     .macro-card.carbs .macro-bar-fill { background: var(--color-carbs); }
+
+    /* ===== Macro Status States ===== */
+    .macro-card.status-good .macro-value {
+      color: #3a7d44 !important;
+      font-weight: 800;
+    }
+    .macro-card.status-good .macro-bar-fill { background: #3a7d44 !important; }
+    .macro-card.status-good {
+      box-shadow: 0 0 0 2px rgba(58, 125, 68, 0.25), var(--md-elevation-1);
+    }
+    .macro-card.status-warning .macro-value {
+      color: #b85c00 !important;
+      font-weight: 800;
+    }
+    .macro-card.status-warning .macro-bar-fill { background: #b85c00 !important; }
+    .macro-card.status-warning {
+      box-shadow: 0 0 0 2px rgba(184, 92, 0, 0.25), var(--md-elevation-1);
+    }
+    .macro-card.status-danger .macro-value {
+      color: #c0392b !important;
+      font-weight: 800;
+    }
+    .macro-card.status-danger .macro-bar-fill { background: #c0392b !important; }
+    .macro-card.status-danger {
+      box-shadow: 0 0 0 2px rgba(192, 57, 43, 0.3), var(--md-elevation-1);
+    }
+    .macro-card .macro-status-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+    .macro-card.status-good .macro-status-badge {
+      background: rgba(58, 125, 68, 0.15);
+      color: #3a7d44;
+    }
+    .macro-card.status-warning .macro-status-badge {
+      background: rgba(184, 92, 0, 0.15);
+      color: #b85c00;
+    }
+    .macro-card.status-danger .macro-status-badge {
+      background: rgba(192, 57, 43, 0.15);
+      color: #c0392b;
+    }
 
     /* ===== Cost Summary ===== */
     .cost-summary {
@@ -1392,6 +1440,81 @@
       document.getElementById('totalCostValue').textContent = formatCurrencyTWD(totalCost);
     }
 
+    function getMacroStatus(type, value, g) {
+      if (!value) return 'neutral';
+      switch (type) {
+        case 'calories': {
+          const bmr = 1563;
+          const target = g.dailyCalories || 2100;
+          if (value >= bmr && value <= target) return 'good';
+          if (value < bmr) return 'warning';
+          return 'danger';
+        }
+        case 'protein': {
+          const goal = g.protein || 120;
+          return value >= goal ? 'good' : 'danger';
+        }
+        case 'fat': {
+          const limit = g.fat || 50;
+          return value <= limit ? 'good' : 'danger';
+        }
+        case 'carbs': {
+          const target = g.carbs || 293;
+          const min = target * 0.8;
+          if (value >= min && value <= target) return 'good';
+          if (value < min) return 'warning';
+          return 'danger';
+        }
+        default: return 'neutral';
+      }
+    }
+
+    const STATUS_LABELS = {
+      good: '達標',
+      warning: '偏低',
+      danger: '超標',
+      neutral: ''
+    };
+    const DANGER_LABELS = {
+      calories_low: '偏低',
+      calories_high: '超標',
+      protein: '不足',
+      fat: '超標',
+      carbs_low: '偏低',
+      carbs_high: '超標',
+    };
+
+    function applyMacroStatus(cardId, type, value, g) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      card.classList.remove('status-good', 'status-warning', 'status-danger');
+
+      let badge = card.querySelector('.macro-status-badge');
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'macro-status-badge';
+        const goal = card.querySelector('.macro-goal');
+        if (goal) goal.after(badge);
+      }
+
+      if (!value) { badge.textContent = ''; return; }
+
+      const status = getMacroStatus(type, value, g);
+      if (status !== 'neutral') card.classList.add('status-' + status);
+
+      // Specific label for calories (low vs high danger differs)
+      let label = '';
+      if (status === 'good') label = '達標';
+      else if (status === 'warning') label = '偏低';
+      else if (status === 'danger') {
+        if (type === 'calories') label = value > (g.dailyCalories || 2100) ? '超標' : '偏低';
+        else if (type === 'protein') label = '不足';
+        else if (type === 'fat') label = '超標';
+        else if (type === 'carbs') label = '超標';
+      }
+      badge.textContent = label;
+    }
+
     function updateMacros(totals) {
       const g = state.goals || {};
       const cal = totals?.calories || 0;
@@ -1404,15 +1527,20 @@
       document.getElementById('totalFat').textContent = fat + 'g';
       document.getElementById('totalCarbs').textContent = carbs + 'g';
 
-      document.getElementById('goalCal').textContent = `/ ${g.dailyCalories || '-'}`;
-      document.getElementById('goalProtein').textContent = `/ ${g.protein || '-'}g`;
+      document.getElementById('goalCal').textContent = `${g.dailyCalories || '-'} kcal 目標`;
+      document.getElementById('goalProtein').textContent = `≥ ${g.protein || '-'}g`;
       document.getElementById('goalFat').textContent = `≤ ${g.fat || '-'}g`;
-      document.getElementById('goalCarbs').textContent = `/ ${g.carbs || '-'}g`;
+      document.getElementById('goalCarbs').textContent = `${g.carbs || '-'}g 目標`;
 
       document.getElementById('barCal').style.width = pct(cal, g.dailyCalories) + '%';
       document.getElementById('barProtein').style.width = pct(protein, g.protein) + '%';
       document.getElementById('barFat').style.width = pct(fat, g.fat) + '%';
       document.getElementById('barCarbs').style.width = pct(carbs, g.carbs) + '%';
+
+      applyMacroStatus('macroCalories', 'calories', cal, g);
+      applyMacroStatus('macroProtein', 'protein', protein, g);
+      applyMacroStatus('macroFat', 'fat', fat, g);
+      applyMacroStatus('macroCarbs', 'carbs', carbs, g);
     }
 
     // ===== History Tab =====
