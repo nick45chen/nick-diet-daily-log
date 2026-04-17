@@ -3,6 +3,42 @@
   "weight": null,
   "meals": [
     {
+      "type": "早餐",
+      "time": "09:31",
+      "displayName": "御飯糰 黑胡椒烤雞 + 光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
+      "cost": {
+        "amount": 75,
+        "currency": "TWD",
+        "note": "組合價"
+      },
+      "items": [
+        {
+          "name": "御飯糰 黑胡椒烤雞",
+          "calories": 416,
+          "protein": 15.4,
+          "fat": 6.1,
+          "carbs": 74.8,
+          "note": "包裝標示",
+          "image": "images/meals/2026-04-17-breakfast-1.jpg"
+        },
+        {
+          "name": "光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
+          "calories": 184.5,
+          "protein": 14.4,
+          "fat": 8.1,
+          "carbs": 18.0,
+          "note": "包裝標示（同品項沿用 2026-04-15 早餐記錄）",
+          "image": "images/meals/2026-04-17-breakfast-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 600.5,
+        "protein": 29.8,
+        "fat": 14.2,
+        "carbs": 92.8
+      }
+    },
+    {
       "type": "午餐",
       "time": "12:00",
       "displayName": "茴香素食冰花水餃 + 炒茼蒿 + 番茄炒蛋",
@@ -48,42 +84,6 @@
       }
     },
     {
-      "type": "早餐",
-      "time": "09:31",
-      "displayName": "御飯糰 黑胡椒烤雞 + 光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
-      "cost": {
-        "amount": 75,
-        "currency": "TWD",
-        "note": "組合價"
-      },
-      "items": [
-        {
-          "name": "御飯糰 黑胡椒烤雞",
-          "calories": 416,
-          "protein": 15.4,
-          "fat": 6.1,
-          "carbs": 74.8,
-          "note": "包裝標示",
-          "image": "images/meals/2026-04-17-breakfast-1.jpg"
-        },
-        {
-          "name": "光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
-          "calories": 184.5,
-          "protein": 14.4,
-          "fat": 8.1,
-          "carbs": 18.0,
-          "note": "包裝標示（同品項沿用 2026-04-15 早餐記錄）",
-          "image": "images/meals/2026-04-17-breakfast-1.jpg"
-        }
-      ],
-      "subtotal": {
-        "calories": 600.5,
-        "protein": 29.8,
-        "fat": 14.2,
-        "carbs": 92.8
-      }
-    },
-    {
       "type": "晚餐",
       "time": "18:30",
       "displayName": "Subway 墨西哥辣牛潛艇堡 + 單點香烤雞胸排",
@@ -118,17 +118,47 @@
         "fat": 11,
         "carbs": 49
       }
+    },
+    {
+      "type": "點心",
+      "time": "15:00",
+      "items": [
+        {
+          "name": "馬玉山 輕烤焦糖莓果穀脆",
+          "calories": 128,
+          "protein": 3,
+          "fat": 7,
+          "carbs": 14,
+          "note": "包裝標示",
+          "image": null
+        },
+        {
+          "name": "福樂超能蛋白（低脂·草莓口味）",
+          "calories": 208,
+          "protein": 21.8,
+          "fat": 1.1,
+          "carbs": 27.8,
+          "note": "包裝標示（208 kcal / 蛋白質 21.8g）",
+          "image": null
+        }
+      ],
+      "subtotal": {
+        "calories": 336,
+        "protein": 24.8,
+        "fat": 8.1,
+        "carbs": 41.8
+      }
     }
   ],
   "dailyTotal": {
-    "calories": 1775.5,
-    "protein": 103.8,
-    "fat": 58.2,
-    "carbs": 211.8
+    "calories": 2111.5,
+    "protein": 128.6,
+    "fat": 66.3,
+    "carbs": 253.6
   },
   "dailyCostTotal": {
     "amount": 485,
     "currency": "TWD"
   },
-  "advice": "熱量 1775.5 / 2100 kcal（85%）✅ 略低於目標，整體攝取合理。\n蛋白質 103.8g / 120g ⚠️ 尚差 16.2g，若有消夜可補充一份茶葉蛋或高蛋白飲品衝刺達標。\n脂肪 58.2g / ≤50g ❌ 超標 8.2g，午餐冰花水餃底部油脂較高所致，明日午晚餐建議以清蒸、水煮或烤製料理為主。\n碳水 211.8g / 293g ⚠️ 尚差 81.2g，明日早餐建議搭配地瓜或全麥吐司補充優質碳水，同時注意明日脂肪控制在 45g 以內作補償。"
+  "advice": "熱量 2111.5 / 2100 kcal（101%）✅ 已達標，整體控制良好。\n蛋白質 128.6g / 120g ✅ 超標 8.6g，今日蛋白質補充充足，繼續保持。\n脂肪 66.3g / ≤50g ❌ 超標 16.3g，主要來自午餐冰花水餃與早餐豆漿，明日建議以清蒸、水煮或烤製料理為主，脂肪控制在 40g 以內作補償。\n碳水 253.6g / 293g ⚠️ 尚差 39.4g，明日早餐可搭配地瓜或全麥吐司補充優質碳水。"
 }
