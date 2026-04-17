@@ -1,0 +1,53 @@
+{
+  "date": "2026-04-17",
+  "weight": null,
+  "meals": [
+    {
+      "type": "早餐",
+      "time": "09:31",
+      "displayName": "御飯糰 黑胡椒烤雞 + 光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
+      "cost": {
+        "amount": 75,
+        "currency": "TWD",
+        "note": "組合價"
+      },
+      "items": [
+        {
+          "name": "御飯糰 黑胡椒烤雞",
+          "calories": 416,
+          "protein": 15.4,
+          "fat": 6.1,
+          "carbs": 74.8,
+          "note": "包裝標示",
+          "image": "images/meals/2026-04-17-breakfast-1.jpg"
+        },
+        {
+          "name": "光泉認證豆漿（燕麥高纖・無加糖鮮豆漿）",
+          "calories": 184.5,
+          "protein": 14.4,
+          "fat": 8.1,
+          "carbs": 18.0,
+          "note": "包裝標示（同品項沿用 2026-04-15 早餐記錄）",
+          "image": "images/meals/2026-04-17-breakfast-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 600.5,
+        "protein": 29.8,
+        "fat": 14.2,
+        "carbs": 92.8
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 600.5,
+    "protein": 29.8,
+    "fat": 14.2,
+    "carbs": 92.8
+  },
+  "dailyCostTotal": {
+    "amount": 75,
+    "currency": "TWD"
+  },
+  "advice": "熱量已攝取 600.5 / 2100 kcal（29%）⚠️ 尚差 1499.5 kcal，目前僅早餐，午晚餐可正常補足主食與蛋白質，避免晚上一次吃過量。\n蛋白質 29.8g / 120g ⚠️ 尚差 90.2g，午晚餐建議各補一份雞胸肉、魚排、豆腐或茶葉蛋，提高整日達標機率。\n脂肪 14.2g / ≤50g ✅ 仍在控制範圍內，後續可維持清爽烹調，避免炸物與高油醬料。\n碳水 92.8g / 293g ⚠️ 尚差 200.2g，午餐可搭配白飯、地瓜或燕麥，讓能量分配更平均；明日早餐可延續高蛋白豆漿搭配原型澱粉的方向。"
+}
