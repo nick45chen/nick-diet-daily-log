@@ -1,0 +1,53 @@
+{
+  "date": "2026-04-21",
+  "weight": null,
+  "meals": [
+    {
+      "type": "早餐",
+      "time": "08:30",
+      "displayName": "星級饗宴 麻油雞飯糰 + 光泉無加糖黑豆漿",
+      "cost": {
+        "amount": 64,
+        "currency": "TWD",
+        "note": "組合價"
+      },
+      "items": [
+        {
+          "name": "星級饗宴 麻油雞飯糰",
+          "calories": 354,
+          "protein": 10.5,
+          "fat": 10.8,
+          "carbs": 53.6,
+          "note": "包裝標示（每包 190g）",
+          "image": "images/meals/2026-04-21-breakfast-1.jpg"
+        },
+        {
+          "name": "光泉無加糖黑豆漿（400ml）",
+          "calories": 142,
+          "protein": 14.0,
+          "fat": 5.2,
+          "carbs": 5.2,
+          "note": "包裝標示（每份 400ml，整盒）",
+          "image": "images/meals/2026-04-21-breakfast-2.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 496,
+        "protein": 24.5,
+        "fat": 16.0,
+        "carbs": 58.8
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 496,
+    "protein": 24.5,
+    "fat": 16.0,
+    "carbs": 58.8
+  },
+  "dailyCostTotal": {
+    "amount": 64,
+    "currency": "TWD"
+  },
+  "advice": "早餐熱量 496 / 2100 kcal（24%）✅，麻油雞飯糰搭配無糖黑豆漿，蛋白質雙管齊下。\n蛋白質 24.5g / 目標 120g，今日剩餘三餐需補充約 95g，建議午晚餐各安排一份雞胸肉、豆腐或水煮蛋等高蛋白食材。\n脂肪 16g / ≤50g，尚有 34g 空間，午晚餐以清蒸、水煮或烤製料理為宜。\n碳水 58.8g / 293g，午餐可搭配地瓜或糙米補充優質碳水，讓全日達標。"
+}

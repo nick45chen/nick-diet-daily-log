@@ -1,0 +1,44 @@
+{
+  "date": "2026-04-19",
+  "weight": null,
+  "meals": [
+    {
+      "type": "早餐",
+      "time": "09:00",
+      "displayName": "Subway 嫩雞沙拉捲餅（菠菜麵皮）",
+      "cost": {
+        "amount": 182,
+        "currency": "TWD",
+        "note": "單點價"
+      },
+      "items": [
+        {
+          "name": "Subway 嫩雞沙拉捲餅（菠菜麵皮，含雞肉條、生菜、玉米沙拉醬）",
+          "calories": 385,
+          "protein": 27,
+          "fat": 12,
+          "carbs": 46,
+          "note": "估算（菠菜麵皮約170kcal、雞肉條90g約150kcal、生菜蔬菜20kcal、玉米沙拉醬30g約45kcal）",
+          "image": "images/meals/2026-04-19-breakfast-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 385,
+        "protein": 27,
+        "fat": 12,
+        "carbs": 46
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 385,
+    "protein": 27,
+    "fat": 12,
+    "carbs": 46
+  },
+  "dailyCostTotal": {
+    "amount": 182,
+    "currency": "TWD"
+  },
+  "advice": "早餐熱量 385 / 2100 kcal（18%）⚠️ 略低，菠菜麵皮捲餅屬中蛋白輕食，補充蛋白質有幫助。\n蛋白質 27g / 目標 120g，今日剩餘三餐需補充約 93g，建議午晚餐各安排雞胸肉、鮪魚或蛋類等高蛋白食材。\n脂肪 12g / ≤50g ✅，控制良好，尚有 38g 空間。\n碳水 46g / 293g，午晚餐可搭配糙米飯或地瓜補充優質碳水，避免後段熱量缺口過大。"
+}
