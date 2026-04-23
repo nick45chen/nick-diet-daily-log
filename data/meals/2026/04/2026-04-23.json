@@ -1,0 +1,44 @@
+{
+  "date": "2026-04-23",
+  "weight": null,
+  "meals": [
+    {
+      "type": "早餐",
+      "time": "08:30",
+      "displayName": "7-11 韓式炸豬排起司雙拼飯卷",
+      "cost": {
+        "amount": 89,
+        "currency": "TWD",
+        "note": "整餐價格"
+      },
+      "items": [
+        {
+          "name": "7-11 韓式炸豬排起司雙拼飯卷",
+          "calories": 367,
+          "protein": 13.4,
+          "fat": 11.7,
+          "carbs": 51.9,
+          "note": "包裝標示（使用者提供營養數據；依附件辨識）",
+          "image": "images/meals/2026-04-23-breakfast-1.jpg"
+        }
+      ],
+      "subtotal": {
+        "calories": 367,
+        "protein": 13.4,
+        "fat": 11.7,
+        "carbs": 51.9
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 367,
+    "protein": 13.4,
+    "fat": 11.7,
+    "carbs": 51.9
+  },
+  "dailyCostTotal": {
+    "amount": 89,
+    "currency": "TWD"
+  },
+  "advice": "熱量 367 / 2100 kcal（17%）⚠️，早餐份量偏輕，午餐與晚餐需要補足主餐與蛋白質，避免全天熱量落差過大。\n蛋白質 13.4g / 120g ⚠️，距離目標仍差 106.6g，今天後續可優先補雞胸肉、魚肉、豆腐、茶葉蛋或高蛋白飲。\n脂肪 11.7g / ≤50g ✅，目前控制在範圍內，後續餐次可持續避免炸物與重油醬料，保留脂肪額度給正餐。\n碳水 51.9g / 293g ⚠️，若今天有訓練或活動量較高，建議午晚餐搭配白飯、地瓜或水果，讓能量更穩定。"
+}
