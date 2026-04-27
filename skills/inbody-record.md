@@ -1,6 +1,6 @@
 ---
 name: inbody-record
-description: InBody 身體數據記錄技能。當使用者輸入「記錄 InBody」、「InBody」、「身體數據」，或上傳 InBody 報告照片時自動觸發。
+description: InBody 身體數據記錄技能。當使用者輸入「記錄 InBody」、「InBody」、「身體數據」，或上傳 InBody 報告照片時自動觸發；完成後自動 commit & push 並回報總結。
 ---
 
 # InBody 記錄 Skill
@@ -55,7 +55,20 @@ sips -Z 1200 "images/inbody/YYYY-MM-DD.jpg"
 
 加入 inbody 陣列，更新 `lastUpdated`。
 
-### Step 5：回報結果
+### Step 5：自動 commit & push
+
+```bash
+git status
+git add data/inbody/YYYY/MM/YYYY-MM-DD.json data/manifest.json images/inbody/YYYY-MM-DD.jpg
+git commit -m "changed: add YYYY-MM-DD inbody log"
+git push
+git rev-parse --short HEAD
+```
+
+- commit 前確認 working tree 只有本次新增檔案；若有額外變動先停下並回報使用者。
+- push 失敗 → 立即停止並把錯誤回報；不可自行加 `--force` 或 `--no-verify`。
+
+### Step 6：回報結果
 
 ```
 ✅ 已記錄 InBody 數據 (YYYY-MM-DD)
@@ -65,6 +78,9 @@ sips -Z 1200 "images/inbody/YYYY-MM-DD.jpg"
 📉 體脂率：21.8%
 📊 BMI：24.1
 🔥 基礎代謝：1580 kcal
+
+✅ commit + push 完成（commit: <short SHA>）
+🌐 GitHub Pages 約 1 分鐘內更新
 ```
 
 ---
@@ -74,4 +90,4 @@ sips -Z 1200 "images/inbody/YYYY-MM-DD.jpg"
 - 所有日期使用 Asia/Taipei 時區
 - JSON 檔案使用 2-space indent, UTF-8 編碼
 - 圖片路徑使用相對路徑（相對於專案根目錄）
-- 每次更新完提醒使用者 `git push` 以更新網頁
+- commit + push 由本 skill 自動完成；僅當自動 push 失敗時才回報並請使用者處理

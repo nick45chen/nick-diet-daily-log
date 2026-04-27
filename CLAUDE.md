@@ -112,7 +112,7 @@ changed: update 2026-04-14 meal log
 feat: add InBody trend chart
 ```
 
-After every data update, remind the user to `git push` to deploy to GitHub Pages.
+After every data update, the diet-record / inbody-record skills now run `git commit` + `git push` automatically as their final step. Only fall back to reminding the user to push manually if the automated push fails.
 
 ## 部署
 
