@@ -1,0 +1,44 @@
+{
+  "date": "2026-05-11",
+  "weight": null,
+  "meals": [
+    {
+      "type": "早餐",
+      "time": "08:30",
+      "displayName": "新極上飯糰 蔥鹽生鮭",
+      "cost": {
+        "amount": 55,
+        "currency": "TWD",
+        "note": "包裝標示價格"
+      },
+      "items": [
+        {
+          "name": "新極上飯糰 蔥鹽生鮭",
+          "calories": 230,
+          "protein": 8,
+          "fat": 4,
+          "carbs": 41,
+          "note": "依照片估算（參考 2026-04-22 相近鹽蔥生鮭御飯糰；正面包裝無營養標示）",
+          "image": ""
+        }
+      ],
+      "subtotal": {
+        "calories": 230,
+        "protein": 8,
+        "fat": 4,
+        "carbs": 41
+      }
+    }
+  ],
+  "dailyTotal": {
+    "calories": 230,
+    "protein": 8,
+    "fat": 4,
+    "carbs": 41
+  },
+  "dailyCostTotal": {
+    "amount": 55,
+    "currency": "TWD"
+  },
+  "advice": "熱量 230 / 2100 kcal（11%）⚠️ 目前僅早餐紀錄，全天仍明顯不足，午晚餐建議補足一份主食與高蛋白主菜。\n蛋白質 8g / 120g ⚠️ 尚差 112g，建議後續補充雞胸肉、白肉魚、豆腐或高蛋白牛乳。\n脂肪 4g / ≤50g ✅，目前控制良好，後續仍可優先選清蒸、烤製或水煮料理。\n碳水 41g / 293g ⚠️ 尚差 252g，下一餐可加入白飯、地瓜或香蕉；明日早餐建議搭配蛋、豆漿或優格提高蛋白質密度。"
+}
