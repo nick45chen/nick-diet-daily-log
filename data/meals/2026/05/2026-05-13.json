@@ -37,17 +37,80 @@
         "fat": 10,
         "carbs": 51
       }
+    },
+    {
+      "type": "午餐",
+      "time": "12:30",
+      "displayName": "舒肥雞咖哩",
+      "cost": {
+        "amount": 140,
+        "currency": "TWD",
+        "note": "整餐價格"
+      },
+      "items": [
+        {
+          "name": "白飯",
+          "calories": 280,
+          "protein": 5,
+          "fat": 1,
+          "carbs": 62,
+          "note": "依照片估算（約 200g）",
+          "image": ""
+        },
+        {
+          "name": "舒肥雞胸",
+          "calories": 120,
+          "protein": 24,
+          "fat": 2,
+          "carbs": 1,
+          "note": "依照片估算（參考雞胸肉約 100g）",
+          "image": ""
+        },
+        {
+          "name": "咖哩醬與馬鈴薯",
+          "calories": 260,
+          "protein": 4,
+          "fat": 12,
+          "carbs": 35,
+          "note": "依照片估算（含咖哩醬、馬鈴薯與紅蘿蔔）",
+          "image": ""
+        },
+        {
+          "name": "半顆水煮蛋",
+          "calories": 38,
+          "protein": 4,
+          "fat": 3,
+          "carbs": 0,
+          "note": "依照片估算（約 1/2 顆）",
+          "image": ""
+        },
+        {
+          "name": "蔬菜配菜",
+          "calories": 60,
+          "protein": 3,
+          "fat": 2,
+          "carbs": 10,
+          "note": "依照片估算（花椰菜、小黃瓜與杏鮑菇）",
+          "image": ""
+        }
+      ],
+      "subtotal": {
+        "calories": 758,
+        "protein": 40,
+        "fat": 20,
+        "carbs": 108
+      }
     }
   ],
   "dailyTotal": {
-    "calories": 380,
-    "protein": 23,
-    "fat": 10,
-    "carbs": 51
+    "calories": 1138,
+    "protein": 63,
+    "fat": 30,
+    "carbs": 159
   },
   "dailyCostTotal": {
-    "amount": 94,
+    "amount": 234,
     "currency": "TWD"
   },
-  "advice": "熱量 380 / 2100 kcal（18%）⚠️ 早餐後仍有 1720 kcal 空間，午晚餐可安排一份主食搭配足量蛋白質。\n蛋白質 23g / 120g ⚠️ 尚差 97g，建議午餐補雞胸肉、魚排、豆腐或茶葉蛋，晚餐再安排瘦肉或海鮮。\n脂肪 10g / ≤50g ✅ 目前控制良好，後續餐點避免炸物與重油醬料即可。\n碳水 51g / 293g ⚠️ 尚差 242g，今日可用白飯、地瓜、燕麥或水果分散補足，避免晚餐一次吃太多。"
+  "advice": "熱量 1138 / 2100 kcal（54%）⚠️ 尚差 962 kcal，晚餐可安排一份主食與完整蛋白質，避免全天熱量過低。\n蛋白質 63g / 120g ⚠️ 尚差 57g，晚餐建議補雞胸肉、白肉魚、豆腐或無糖高蛋白飲。\n脂肪 30g / ≤50g ✅ 目前控制良好，晚餐維持清蒸、烤或滷的低油料理即可。\n碳水 159g / 293g ⚠️ 尚差 134g，今日可用白飯、地瓜、燕麥或水果分散補足，明日早餐也建議保留優質碳水搭配蛋白質。"
 }
