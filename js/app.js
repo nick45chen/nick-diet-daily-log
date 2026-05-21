@@ -61,6 +61,12 @@ async function switchTab(tabId) {
 function setupTabNavigation() {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
+      const isAlreadyActive = btn.classList.contains('active');
+      if (isAlreadyActive && btn.dataset.tab === 'daily') {
+        const today = getTodayTaipei();
+        if (state.currentDate !== today) await loadDay(today);
+        return;
+      }
       await switchTab(btn.dataset.tab);
     });
   });
