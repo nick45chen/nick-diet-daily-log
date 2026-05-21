@@ -11,6 +11,7 @@ import { loadDay } from './tabs/daily.js';
 import { renderHistory } from './tabs/history.js';
 import { renderInBody } from './tabs/inbody.js';
 import { renderGoals } from './tabs/goals.js';
+import { renderSearch, invalidateSearchIndex } from './tabs/search.js';
 
 function renderShellError(message) {
   document.getElementById('tabContainer').innerHTML = `
@@ -54,6 +55,7 @@ async function switchTab(tabId) {
   if (tabId === 'history') await renderHistory();
   if (tabId === 'inbody') await renderInBody();
   if (tabId === 'goals') renderGoals(state.goals, state.latestBmr);
+  if (tabId === 'search') await renderSearch();
 }
 
 function setupTabNavigation() {
@@ -101,10 +103,12 @@ async function refreshManifest() {
 
   if (!changed) return;
 
+  invalidateSearchIndex();
   await loadDay(state.currentDate, { forceRefresh: true });
   if (document.getElementById('history').classList.contains('active')) await renderHistory();
   if (document.getElementById('inbody').classList.contains('active')) await renderInBody();
   if (document.getElementById('goals').classList.contains('active')) renderGoals(state.goals, state.latestBmr);
+  if (document.getElementById('search').classList.contains('active')) await renderSearch();
 }
 
 async function init() {

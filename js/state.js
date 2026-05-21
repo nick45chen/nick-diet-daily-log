@@ -16,7 +16,8 @@ export const TAB_PARTIALS = [
   'partials/daily.html',
   'partials/history.html',
   'partials/inbody.html',
-  'partials/goals.html'
+  'partials/goals.html',
+  'partials/search.html'
 ];
 export const SHELL_PARTIALS = [
   { path: 'partials/header.html', mountId: 'headerMount' },
